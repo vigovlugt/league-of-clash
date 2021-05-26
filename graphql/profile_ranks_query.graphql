@@ -1,0 +1,20 @@
+query FetchProfileRanks($summonerName: String!, $regionId: String!, $seasonId: Int!) {
+    fetchProfileRanks(summonerName: $summonerName, regionId: $regionId, seasonId: $seasonId) {
+        ...PlayerRankFields
+    }
+}
+
+fragment PlayerRankFields on PlayerRank {
+    rankScores {
+        lastUpdatedAt
+        losses
+        lp
+        promoProgress
+        queueType
+        rank
+        role
+        seasonId
+        tier
+        wins
+    }
+}
