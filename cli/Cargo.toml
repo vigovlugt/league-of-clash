@@ -1,0 +1,13 @@
+[package]
+name = "league-of-clash-cli"
+version = "0.1.0"
+authors = ["vigovlugt <vigovlugt@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+league_of_clash = {path = "../league_of_clash"}
+riven="1.12.1"
+tokio = { version = "1", features = ["full"] }
+clap = "2"

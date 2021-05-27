@@ -1,5 +1,5 @@
-query FetchMatchSummaries($summonerName: String!, $page: Int!) {
-    fetchPlayerMatchSummaries(page: $page, queueType: [420], regionId: "euw1", seasonId: 16, summonerName: $summonerName) {
+query FetchMatchSummaries($summonerName: String!, $regionId: String!, $seasonId: Int!, $page: Int!) {
+    fetchPlayerMatchSummaries(page: $page, queueType: [420], regionId: $regionId, seasonId: $seasonId, summonerName: $summonerName) {
         ...PlayerMatchHistory
     }
 }

@@ -40,7 +40,7 @@ pub async fn get(
         .unwrap()
         .into_iter()
         .find(|x| x.as_ref().unwrap().queue_type.as_ref().unwrap() == "ranked_solo_5x5")
-        .unwrap()
+        .expect("This summoner has not played ranked solo duo this season")
         .unwrap();
 
     Ok(solo_duo_data)
