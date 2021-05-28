@@ -1,4 +1,4 @@
-use std::{convert::TryFrom, env};
+use std::convert::TryFrom;
 
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use league_of_clash::{
@@ -28,20 +28,31 @@ async fn main() {
                 .arg(Arg::with_name("SUMMONER_4").required(true).index(4))
                 .arg(Arg::with_name("SUMMONER_5").required(true).index(5)),
         )
+        .subcommand(
+            SubCommand::with_name("player")
+                .about("Get info about player")
+                .arg(
+                    Arg::with_name("region")
+                        .short("r")
+                        .long("region")
+                        .takes_value(true),
+                )
+                .arg(Arg::with_name("SUMMONER_NAME").required(true).index(1)),
+        )
         .setting(AppSettings::ArgRequiredElseHelp);
 
     let matches = app.get_matches();
 
     if let Some(matches) = matches.subcommand_matches("team") {
         run_team(matches).await.unwrap();
+    } else if let Some(matches) = matches.subcommand_matches("player") {
+        run(matches).await.unwrap();
     }
 }
 
-pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
-
-    let summoner_name = &args[2];
-    let region = &args[1];
+pub async fn run(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error::Error>> {
+    let summoner_name = arg_matches.value_of("SUMMONER_NAME").unwrap();
+    let region = arg_matches.value_of("region").unwrap_or("euw1");
     // let _days = &args[3].parse::<i64>()?;
     // let _pow = &args[4].parse::<f64>()?;
 
@@ -57,7 +68,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
 fn print_for_player(summoner_name: String, champion_stats: Vec<ChampionStats>) {
     println!("{}", summoner_name);
-    println!("Champ\tWinrate\tGames\tCarry\tKDA\tRealWr");
+    println!("Champ\tWinrate\tGames\tCarry\tKDA\tScore");
     for stats in champion_stats.iter().take(15) {
         println!(
             "{:.6}\t{:.2}\t{}\t{:.2}\t{:.2}\t{:.2}",
@@ -66,7 +77,7 @@ fn print_for_player(summoner_name: String, champion_stats: Vec<ChampionStats>) {
             stats.games,
             stats.carry_score(),
             stats.kda(),
-            stats.total_winrate() * 100f64
+            stats.score * 100.0
         );
     }
     println!();

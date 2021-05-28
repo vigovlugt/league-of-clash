@@ -10,11 +10,10 @@ pub struct ChampionStats {
     pub ps_hard_carry: f64,
     pub ps_team_play: f64,
 
-    // WEIGHTED WINS AND GAMES
-    pub wins: f64,
+    pub wins: i64,
     pub games: i64,
 
-    pub total_wins: i64,
+    pub score: f64,
 }
 
 impl ChampionStats {
@@ -26,9 +25,9 @@ impl ChampionStats {
         kill_participation: f64,
         ps_hard_carry: f64,
         ps_team_play: f64,
-        wins: f64,
+        wins: i64,
         games: i64,
-        total_wins: i64,
+        score: f64,
     ) -> Self {
         ChampionStats {
             champion_id,
@@ -40,7 +39,7 @@ impl ChampionStats {
             ps_team_play,
             wins,
             games,
-            total_wins,
+            score,
         }
     }
 
@@ -54,9 +53,5 @@ impl ChampionStats {
 
     pub fn winrate(&self) -> f64 {
         self.wins as f64 / self.games as f64
-    }
-
-    pub fn total_winrate(&self) -> f64 {
-        self.total_wins as f64 / self.games as f64
     }
 }
