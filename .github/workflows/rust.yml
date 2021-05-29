@@ -15,9 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: 
+    - name: Setup
       run: sudo apt install -y mingw-w64
-    - name: 
+    - name: Add windows target
       run: rustup target add x86_64-pc-windows-gnu
     - name: Build
       run: cargo build --release
@@ -29,6 +29,6 @@ jobs:
       with:
         files: |
           target/release/league-of-clash-cli
-          target/release/league-of-clash-cli.exe
+          target/x86_64-pc-windows-gnu/release/league-of-clash-cli.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
