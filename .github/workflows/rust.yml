@@ -27,6 +27,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: target/release/league-of-clash-cli
+        files: |
+          target/release/league-of-clash-cli
+          target/release/league-of-clash-cli.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
