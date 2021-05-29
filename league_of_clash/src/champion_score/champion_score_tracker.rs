@@ -51,7 +51,7 @@ impl ChampionScoreTracker {
     }
 
     pub fn get_score(self) -> f64 {
-        if self.matches < 5 {
+        if self.matches < 10 {
             return 0.0;
         }
 

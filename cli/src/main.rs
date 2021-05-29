@@ -1,7 +1,9 @@
 use std::convert::TryFrom;
 
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
+use colored::*;
 use league_of_clash::{
+    bans::{ban_set::BanSet},
     champion_stats::{self, champion_stats::ChampionStats},
     team::Team,
     utils,
@@ -53,35 +55,15 @@ async fn main() {
 pub async fn run(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error::Error>> {
     let summoner_name = arg_matches.value_of("SUMMONER_NAME").unwrap();
     let region = arg_matches.value_of("region").unwrap_or("euw1");
-    // let _days = &args[3].parse::<i64>()?;
-    // let _pow = &args[4].parse::<f64>()?;
 
     let season_id = utils::get_current_season();
 
     let (summoner_name, champion_stats) =
         champion_stats::get_champion_stats_for_player(&summoner_name, &region, season_id).await?;
 
-    print_for_player(summoner_name, champion_stats);
+    print_player(&summoner_name, &champion_stats);
 
     Ok(())
-}
-
-fn print_for_player(summoner_name: String, champion_stats: Vec<ChampionStats>) {
-    println!("{}", summoner_name);
-    println!("Champ\tWinrate\tGames\tCarry\tKDA\tScore");
-    for stats in champion_stats.iter().take(15) {
-        println!(
-            "{:.6}\t{:.2}\t{}\t{:.2}\t{:.2}\t{:.2}",
-            riven::consts::Champion::try_from(stats.champion_id as i16).unwrap(),
-            stats.winrate() * 100f64,
-            stats.games,
-            stats.carry_score(),
-            stats.kda(),
-            stats.score * 100.0
-        );
-    }
-    println!();
-    println!();
 }
 
 pub async fn run_team(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error::Error>> {
@@ -105,9 +87,51 @@ pub async fn run_team(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::e
 
     let stats = team.get_champion_stats().await?;
 
-    for (player, champ_stats) in stats {
-        print_for_player(player, champ_stats);
+    for (player, champ_stats) in stats.iter() {
+        print_player(&player, &champ_stats);
     }
 
+    let bans = league_of_clash::bans::get_bans(&stats);
+    print_bans(&bans);
+
     Ok(())
+}
+
+fn print_player(summoner_name: &String, champion_stats: &Vec<ChampionStats>) {
+    println!("{}", summoner_name.blue().bold());
+    println!("{}", "Champ\tWinrate\tGames\tCarry\tKDA\tScore".bold());
+    for stats in champion_stats.iter().take(15) {
+        println!(
+            "{:.6}\t{:.2}\t{}\t{:.2}\t{:.2}\t{}",
+            riven::consts::Champion::try_from(stats.champion_id as i16).unwrap(),
+            stats.winrate() * 100f64,
+            stats.games,
+            stats.carry_score(),
+            stats.kda(),
+            format!("{:.2}", stats.score * 100.0).bright_green()
+        );
+    }
+    println!();
+    println!();
+}
+
+fn print_bans(bans: &Vec<BanSet>) {
+    println!("{}", "Bans".bold().red());
+    println!("{}", "Player\tScore\tChamps".bold());
+    for ban in bans.iter().take(15) {
+        println!(
+            "{:.6}\t{:.2}\t{}",
+            ban.summoner_name,
+            ban.priority * 100.0,
+            ban.champion_ids
+                .iter()
+                .map(|id| riven::consts::Champion::try_from(*id as i16)
+                    .unwrap()
+                    .name())
+                .collect::<Vec<_>>()
+                .join(", "),
+        );
+    }
+    println!();
+    println!();
 }
