@@ -3,7 +3,7 @@ use std::convert::TryFrom;
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use colored::*;
 use league_of_clash::{
-    bans::{ban_set::BanSet},
+    bans::bans::Bans,
     champion_stats::{self, champion_stats::ChampionStats},
     team::Team,
     utils,
@@ -115,21 +115,28 @@ fn print_player(summoner_name: &String, champion_stats: &Vec<ChampionStats>) {
     println!();
 }
 
-fn print_bans(bans: &Vec<BanSet>) {
+fn print_bans(bans: &Vec<Bans>) {
     println!("{}", "Bans".bold().red());
-    println!("{}", "Player\tScore\tChamps".bold());
+    println!("{}", "Score\tChamp1\tChamp2\tChamp3".bold());
     for ban in bans.iter().take(15) {
+        let mut champions = Vec::new();
+
+        for set in ban.ban_sets.iter() {
+            for id in set.champion_ids.iter() {
+                champions.push(
+                    riven::consts::Champion::try_from(*id as i16)
+                        .unwrap()
+                        .name(),
+                )
+            }
+        }
+
         println!(
-            "{:.6}\t{:.2}\t{}",
-            ban.summoner_name,
+            "{:.2}\t{:.6}\t{:.6}\t{:.6}",
             ban.priority * 100.0,
-            ban.champion_ids
-                .iter()
-                .map(|id| riven::consts::Champion::try_from(*id as i16)
-                    .unwrap()
-                    .name())
-                .collect::<Vec<_>>()
-                .join(", "),
+            champions[0],
+            champions[1],
+            champions[2]
         );
     }
     println!();

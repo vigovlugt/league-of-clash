@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct BanSet {
     pub summoner_name: String,
     pub champion_ids: Vec<i64>,
