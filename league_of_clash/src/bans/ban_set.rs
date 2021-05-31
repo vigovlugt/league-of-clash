@@ -1,4 +1,5 @@
-#[derive(Clone)]
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Deserialize, Serialize)]
 pub struct BanSet {
     pub summoner_name: String,
     pub champion_ids: Vec<i64>,

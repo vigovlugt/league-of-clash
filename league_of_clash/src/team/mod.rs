@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::{
@@ -5,6 +6,7 @@ use crate::{
     utils,
 };
 
+#[derive(Serialize, Deserialize)]
 pub struct Team {
     pub players: Vec<String>,
     pub region: String,

@@ -684,6 +684,7 @@ dependencies = [
  "reqwest",
  "serde",
  "time 0.2.26",
+ "wasm-bindgen",
 ]
 
 [[package]]

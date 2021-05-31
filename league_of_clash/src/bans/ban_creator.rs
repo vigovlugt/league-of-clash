@@ -49,20 +49,53 @@ impl BanCreator {
         hashmap
     }
 
+    fn get_single_bans(single_bans: &Vec<BanSet>) -> Vec<Bans> {
+        let mut bans = Vec::new();
+
+        let single_bans = single_bans.iter().into_group_map_by(|b| b.champion_ids[0]);
+        let single_bans = single_bans
+            .iter()
+            .map(|(_, ban_sets)| {
+                let mut highest_priority = ban_sets[0];
+                for ban_set in ban_sets.iter().skip(1) {
+                    if ban_set.priority > highest_priority.priority {
+                        highest_priority = ban_set;
+                    }
+                }
+
+                highest_priority
+            })
+            .collect::<Vec<_>>();
+
+        for permuation in single_bans.into_iter().combinations(3) {
+            bans.push(Bans::new(vec![
+                permuation[0].clone(),
+                permuation[1].clone(),
+                permuation[2].clone(),
+            ]));
+        }
+
+        bans
+    }
+
     fn get_all_bans(hashmap: &mut HashMap<usize, Vec<BanSet>>) -> Vec<Bans> {
         let mut bans = Vec::new();
 
-        if let Some(size_3_bans) = hashmap.remove(&3) {
-            for ban_set in size_3_bans {
+        if let Some(triple_bans) = hashmap.remove(&3) {
+            for ban_set in triple_bans {
                 bans.push(Bans::new(vec![ban_set]))
             }
         }
 
-        if let Some(size_2_bans) = hashmap.remove(&2) {
-            if let Some(size_1_bans) = hashmap.remove(&1) {
-                let product = size_2_bans
+        if let Some(single_bans) = hashmap.get(&1) {
+            bans.extend(Self::get_single_bans(single_bans));
+        }
+
+        if let Some(double_bans) = hashmap.remove(&2) {
+            if let Some(single_bans) = hashmap.remove(&1) {
+                let product = double_bans
                     .into_iter()
-                    .cartesian_product(size_1_bans.into_iter());
+                    .cartesian_product(single_bans.into_iter());
 
                 let new_bans = product.map(|(size_1, size_2)| Bans::new(vec![size_2, size_1]));
 

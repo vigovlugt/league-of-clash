@@ -13,7 +13,7 @@ pub async fn get(
     summoner_name: &str,
     region: &str,
     season: i64,
-) -> Result<fetch_profile_ranks::PlayerRankFieldsRankScores, Box<dyn std::error::Error>> {
+) -> Result<Option<fetch_profile_ranks::PlayerRankFieldsRankScores>, Box<dyn std::error::Error>> {
     info!("Getting UGG profile for: {}", summoner_name);
 
     let variables = fetch_profile_ranks::Variables {
@@ -39,9 +39,11 @@ pub async fn get(
         .rank_scores
         .unwrap()
         .into_iter()
-        .find(|x| x.as_ref().unwrap().queue_type.as_ref().unwrap() == "ranked_solo_5x5")
-        .expect("This summoner has not played ranked solo duo this season")
-        .unwrap();
+        .find(|x| x.as_ref().unwrap().queue_type.as_ref().unwrap() == "ranked_solo_5x5");
 
-    Ok(solo_duo_data)
+    Ok(if let Some(Some(data)) = solo_duo_data {
+        Some(data)
+    } else {
+        None
+    })
 }

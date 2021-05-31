@@ -1,4 +1,5 @@
-#[derive(Default, Debug)]
+use serde::{Deserialize, Serialize};
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct ChampionStats {
     pub champion_id: i64,
 

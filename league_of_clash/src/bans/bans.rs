@@ -1,14 +1,26 @@
 use super::ban_set::BanSet;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Bans {
-    pub ban_sets: Vec<BanSet>,
+    pub champion_ids: Vec<i64>,
     pub priority: f64,
 }
 
 impl Bans {
     pub fn new(ban_sets: Vec<BanSet>) -> Self {
-        let priority = ban_sets.iter().map(|x| x.priority).fold(0.0, |a, b| a + b);
-        Self { ban_sets, priority }
+        let mut champion_ids = Vec::new();
+        let mut priority = 0.0;
+
+        for ban_set in ban_sets {
+            champion_ids.extend(ban_set.champion_ids);
+            priority += ban_set.priority;
+        }
+
+        Self {
+            champion_ids,
+            priority,
+        }
     }
 }
 

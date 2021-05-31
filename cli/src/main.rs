@@ -121,14 +121,12 @@ fn print_bans(bans: &Vec<Bans>) {
     for ban in bans.iter().take(15) {
         let mut champions = Vec::new();
 
-        for set in ban.ban_sets.iter() {
-            for id in set.champion_ids.iter() {
-                champions.push(
-                    riven::consts::Champion::try_from(*id as i16)
-                        .unwrap()
-                        .name(),
-                )
-            }
+        for id in ban.champion_ids.iter() {
+            champions.push(
+                riven::consts::Champion::try_from(*id as i16)
+                    .unwrap()
+                    .name(),
+            )
         }
 
         println!(
