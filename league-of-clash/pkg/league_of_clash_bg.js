@@ -547,7 +547,7 @@ export function __wbindgen_memory() {
 };
 
 export function __wbindgen_closure_wrapper533(arg0, arg1, arg2) {
-    var ret = makeMutClosure(arg0, arg1, 158, __wbg_adapter_26);
+    var ret = makeMutClosure(arg0, arg1, 159, __wbg_adapter_26);
     return addHeapObject(ret);
 };
 
