@@ -97,7 +97,11 @@ impl BanCreator {
                     .into_iter()
                     .cartesian_product(single_bans.into_iter());
 
-                let new_bans = product.map(|(size_1, size_2)| Bans::new(vec![size_2, size_1]));
+                let new_bans = product
+                    .filter(|(single, double)| {
+                        !double.champion_ids.contains(&single.champion_ids[0])
+                    })
+                    .map(|(size_1, size_2)| Bans::new(vec![size_2, size_1]));
 
                 bans.extend(new_bans);
             }
