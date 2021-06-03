@@ -15,6 +15,7 @@ const Bans: React.FC<IProps> = ({ teamStats }) => {
             return;
         }
 
+        // @ts-ignore
         import("league_of_clash").then((loc) => {
             const bans = loc.get_bans(teamStats);
             setBans(bans);
