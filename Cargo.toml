@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    "league_of_clash",
+    "league-of-clash",
     "cli",
     "functions"
 ]

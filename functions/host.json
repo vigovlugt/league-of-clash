@@ -14,7 +14,7 @@
   },
   "customHandler": {
     "description": {
-      "defaultExecutablePath": "league_of_clash_functions",
+      "defaultExecutablePath": "league-of-clash-functions",
       "workingDirectory": "",
       "arguments": []
     },

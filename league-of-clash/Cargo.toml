@@ -1,5 +1,5 @@
 [package]
-name = "league_of_clash"
+name = "league-of-clash"
 version = "0.1.0"
 authors = ["Vigo Vlugt <vigovlugt@gmail.com>"]
 edition = "2018"
