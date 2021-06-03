@@ -6,7 +6,6 @@ use league_of_clash::{
     bans::bans::Bans,
     champion_stats::{self, champion_stats::ChampionStats},
     team::Team,
-    utils,
 };
 
 // cargo r team vigovlugt infernoshot pyyr jaxverface sneakym0nk3y
@@ -52,7 +51,9 @@ async fn main() {
     }
 }
 
-pub async fn run(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn run(
+    arg_matches: &ArgMatches<'_>,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let summoner_name = arg_matches.value_of("SUMMONER_NAME").unwrap();
     let region = arg_matches.value_of("region").unwrap_or("euw1");
 
@@ -66,7 +67,9 @@ pub async fn run(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error:
     Ok(())
 }
 
-pub async fn run_team(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn run_team(
+    arg_matches: &ArgMatches<'_>,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let region = arg_matches.value_of("region").unwrap_or("euw1");
 
     let summoner_name1 = arg_matches.value_of("SUMMONER_1").unwrap();
@@ -85,7 +88,7 @@ pub async fn run_team(arg_matches: &ArgMatches<'_>) -> Result<(), Box<dyn std::e
 
     let team = Team::new(players, region.to_owned());
 
-    let stats = team.get_champion_stats().await?;
+    let stats = team.get_champion_stats(utils::get_current_season()).await?;
 
     for (player, champ_stats) in stats.iter() {
         print_player(&player, &champ_stats);

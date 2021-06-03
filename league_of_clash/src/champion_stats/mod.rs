@@ -43,7 +43,7 @@ pub async fn get_champion_stats_for_player(
     summoner_name: &str,
     region: &str,
     season_id: i64,
-) -> Result<(String, Vec<ChampionStats>), Box<dyn std::error::Error>> {
+) -> Result<(String, Vec<ChampionStats>), Box<dyn std::error::Error + Send + Sync>> {
     let matches = ugg::get_match_history_for_player(summoner_name, region, season_id).await?;
 
     let stats = get_stats_by_champion(matches);

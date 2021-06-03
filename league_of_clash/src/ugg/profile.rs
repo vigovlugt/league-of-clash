@@ -1,6 +1,8 @@
 use graphql_client::*;
 use reqwest;
 
+use super::UGG_API;
+
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "graphql/ugg_schema.json",
@@ -13,7 +15,10 @@ pub async fn get(
     summoner_name: &str,
     region: &str,
     season: i64,
-) -> Result<Option<fetch_profile_ranks::PlayerRankFieldsRankScores>, Box<dyn std::error::Error>> {
+) -> Result<
+    Option<fetch_profile_ranks::PlayerRankFieldsRankScores>,
+    Box<dyn std::error::Error + Send + Sync>,
+> {
     info!("Getting UGG profile for: {}", summoner_name);
 
     let variables = fetch_profile_ranks::Variables {
@@ -24,9 +29,9 @@ pub async fn get(
     let query = FetchProfileRanks::build_query(variables);
 
     let client = reqwest::Client::new();
-    let res = client.post("https://u.gg/api").json(&query).send().await?;
+    let res = client.post(UGG_API).json(&query).send().await.unwrap();
 
-    let response_body: Response<fetch_profile_ranks::ResponseData> = res.json().await?;
+    let response_body: Response<fetch_profile_ranks::ResponseData> = res.json().await.unwrap();
 
     let player_rank_fields = response_body
         .data

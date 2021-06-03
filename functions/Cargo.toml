@@ -1,0 +1,14 @@
+[package]
+name = "league_of_clash_functions"
+version = "0.1.0"
+authors = ["vigovlugt <vigovlugt@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+league_of_clash = {path = "../league_of_clash"}
+warp = "0.3.1"
+tokio = { version = "1.6.1", features = ["full"] }
+serde="1.0.126"
+serde_qs="0.8.3"

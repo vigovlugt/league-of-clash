@@ -2,6 +2,8 @@ use graphql_client::*;
 
 use crate::matches::Match;
 
+use super::UGG_API;
+
 type UnixTimestamp = i64;
 
 #[derive(GraphQLQuery)]
@@ -56,7 +58,7 @@ async fn get_page(
     region: &str,
     season_id: i64,
     page: i64,
-) -> Result<Vec<Match>, Box<dyn std::error::Error>> {
+) -> Result<Vec<Match>, Box<dyn std::error::Error + Send + Sync>> {
     let variables = fetch_match_summaries::Variables {
         summoner_name: summoner_name.to_string(),
         page,
@@ -67,7 +69,7 @@ async fn get_page(
     let query = FetchMatchSummaries::build_query(variables);
 
     let client = reqwest::Client::new();
-    let res = client.post("https://u.gg/api").json(&query).send().await?;
+    let res = client.post(UGG_API).json(&query).send().await?;
 
     let response_body: Response<fetch_match_summaries::ResponseData> = res.json().await?;
 
