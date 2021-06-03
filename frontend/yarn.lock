@@ -1264,10 +1264,7 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-league-of-clash@../league-of-clash/pkg/:
-  version "0.1.0"
-
-"league-of-clash@file:../league-of-clash/pkg/":
+"league-of-clash@file:../league-of-clash/pkg":
   version "0.1.0"
 
 loader-utils@1.2.3:
