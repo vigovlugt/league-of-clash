@@ -1,0 +1,15 @@
+{
+  "name": "league-of-clash",
+  "collaborators": [
+    "Vigo Vlugt <vigovlugt@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "league_of_clash_bg.wasm",
+    "league_of_clash.js",
+    "league_of_clash.d.ts"
+  ],
+  "module": "league_of_clash.js",
+  "types": "league_of_clash.d.ts",
+  "sideEffects": false
+}
