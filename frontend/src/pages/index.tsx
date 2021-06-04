@@ -43,13 +43,13 @@ export default function IndexPage() {
     };
 
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex flex-col lg:flex-row">
             <Head>
                 <title>League of Clash</title>
                 <meta name="description" content="League of Clash" />
             </Head>
-            <div className="relative w-full">
-                <div className="bg-dark font-header flex justify-center items-center z-10 absolute inset-0">
+            <div className="relative w-full h-screen">
+                <div className="bg-dark font-header flex justify-center items-center z-10 absolute inset-0 overflow-hidden">
                     <ClashLogo className="w-[800px] absolute text-white opacity-5 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2" />
 
                     <h1 className="text-8xl font-bold tracking-wider text-primary z-20">
@@ -68,7 +68,7 @@ export default function IndexPage() {
                 </svg>
             </div>
 
-            <div className="bg-primary w-full flex justify-center items-center text-dark">
+            <div className="bg-primary w-full flex justify-center items-center text-dark h-screen">
                 <div className="flex flex-col items-center">
                     <h2 className="text-5xl font-header uppercase mb-4">
                         Search Team
@@ -83,6 +83,7 @@ export default function IndexPage() {
                             placeholder="NoWoWFreeWin, g2 jerkkIes, InsaneDanishDude, Yami Sukehiro, Sammy Winchester"
                             onChange={(e) => setTeam(e.target.value)}
                             value={team}
+                            name="clash-team"
                         />
                     </form>
                     {/* TODO:REGION */}

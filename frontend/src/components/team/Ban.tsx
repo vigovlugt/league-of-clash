@@ -14,7 +14,7 @@ const Ban: React.FC<IProps> = ({ ban }) => {
     const banIds = ban.champion_ids.map((id) => championData[id.toString()].id);
 
     return (
-        <div className="bg-dark rounded-lg p-4 flex justify-between items-center mb-4">
+        <div className="bg-dark rounded p-4 flex justify-between items-center mb-4">
             <div className="flex">
                 {banIds.map((id) => (
                     <div
@@ -29,9 +29,14 @@ const Ban: React.FC<IProps> = ({ ban }) => {
                     </div>
                 ))}
             </div>
-            <p className="text-xl text-gray-50">
-                {(ban.priority * 100).toFixed(2)}
-            </p>
+            <div className="flex flex-col items-center text-gray-50">
+                <span className="block text-xs font-medium uppercase tracking-wider text-gray-400">
+                    Priority
+                </span>
+                <span className="text-xl">
+                    {(ban.priority * 100).toFixed(2)}
+                </span>
+            </div>
         </div>
     );
 };

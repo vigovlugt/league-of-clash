@@ -2,7 +2,30 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
 
+import { useRouter } from "next/router";
+
+import NProgress from "nprogress";
+import "../styles/nprogress.css";
+
+import { useEffect } from "react";
+
 function MyApp({ Component, pageProps }: AppProps) {
+    const router = useRouter();
+
+    useEffect(() => {
+        router.events.on("routeChangeStart", () => {
+            NProgress.start();
+        });
+
+        router.events.on("routeChangeComplete", () => {
+            NProgress.done();
+        });
+
+        router.events.on("routeChangeError", () => {
+            NProgress.done();
+        });
+    }, []);
+
     return (
         <>
             <Toaster />
