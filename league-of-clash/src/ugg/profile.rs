@@ -1,6 +1,8 @@
 use graphql_client::*;
 use reqwest;
 
+use crate::player_stats::PlayerStats;
+
 use super::UGG_API;
 
 #[derive(GraphQLQuery)]
@@ -15,10 +17,7 @@ pub async fn get(
     summoner_name: &str,
     region: &str,
     season: i64,
-) -> Result<
-    Option<fetch_profile_ranks::PlayerRankFieldsRankScores>,
-    Box<dyn std::error::Error + Send + Sync>,
-> {
+) -> Result<PlayerStats, Box<dyn std::error::Error + Send + Sync>> {
     info!("Getting UGG profile for: {}", summoner_name);
 
     let variables = fetch_profile_ranks::Variables {
@@ -47,8 +46,14 @@ pub async fn get(
         .find(|x| x.as_ref().unwrap().queue_type.as_ref().unwrap() == "ranked_solo_5x5");
 
     Ok(if let Some(Some(data)) = solo_duo_data {
-        Some(data)
+        PlayerStats::new(
+            summoner_name,
+            data.wins.unwrap(),
+            data.wins.unwrap() + data.losses.unwrap(),
+            data.rank.unwrap(),
+            data.tier.unwrap(),
+        )
     } else {
-        None
+        PlayerStats::new(summoner_name, 0, 0, String::new(), String::new())
     })
 }

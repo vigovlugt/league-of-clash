@@ -78,32 +78,38 @@ impl BanCreator {
         bans
     }
 
+    fn get_triple_bans(triple_bans: &Vec<BanSet>) -> Vec<Bans> {
+        triple_bans
+            .iter()
+            .map(|ban_set| Bans::new(vec![ban_set.clone()]))
+            .collect()
+    }
+
+    fn get_single_double_bans(single_bans: &Vec<BanSet>, double_bans: &Vec<BanSet>) -> Vec<Bans> {
+        let product = double_bans
+            .into_iter()
+            .cartesian_product(single_bans.into_iter());
+
+        product
+            .filter(|(single, double)| !double.champion_ids.contains(&single.champion_ids[0]))
+            .map(|(size_1, size_2)| Bans::new(vec![size_2.clone(), size_1.clone()]))
+            .collect()
+    }
+
     fn get_all_bans(hashmap: &mut HashMap<usize, Vec<BanSet>>) -> Vec<Bans> {
         let mut bans = Vec::new();
 
-        if let Some(triple_bans) = hashmap.remove(&3) {
-            for ban_set in triple_bans {
-                bans.push(Bans::new(vec![ban_set]))
-            }
+        if let Some(triple_bans) = hashmap.get(&3) {
+            bans.extend(Self::get_triple_bans(triple_bans));
         }
 
         if let Some(single_bans) = hashmap.get(&1) {
             bans.extend(Self::get_single_bans(single_bans));
         }
 
-        if let Some(double_bans) = hashmap.remove(&2) {
-            if let Some(single_bans) = hashmap.remove(&1) {
-                let product = double_bans
-                    .into_iter()
-                    .cartesian_product(single_bans.into_iter());
-
-                let new_bans = product
-                    .filter(|(single, double)| {
-                        !double.champion_ids.contains(&single.champion_ids[0])
-                    })
-                    .map(|(size_1, size_2)| Bans::new(vec![size_2, size_1]));
-
-                bans.extend(new_bans);
+        if let Some(double_bans) = hashmap.get(&2) {
+            if let Some(single_bans) = hashmap.get(&1) {
+                bans.extend(Self::get_single_double_bans(single_bans, double_bans));
             }
         }
 

@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
+import Head from "next/head";
 
 import { useRouter } from "next/router";
 
@@ -28,6 +29,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     return (
         <>
+            <Head>
+                <title>League of Clash</title>
+                <meta name="description" content="League of Clash" />
+            </Head>
             <Toaster />
             <Component {...pageProps} />
         </>

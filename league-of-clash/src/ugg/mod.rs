@@ -1,28 +1,27 @@
-use crate::matches::Match;
+use crate::{champion_stats::get_stats_by_champion, player_stats::PlayerStats};
 
-#[cfg(target_arch = "wasm32")]
-pub const UGG_API: &str = "https://cors-anywhere.herokuapp.com/https://u.gg/api";
-#[cfg(not(target_arch = "wasm32"))]
 pub const UGG_API: &str = "https://u.gg/api";
 
 pub mod match_history;
 pub mod profile;
+pub mod team;
 
-pub async fn get_match_history_for_player(
+pub async fn get_player_stats(
     summoner_name: &str,
     region: &str,
     season_id: i64,
-) -> Result<Vec<Match>, Box<dyn std::error::Error + Send + Sync>> {
-    let ranked_data = profile::get(summoner_name, region, season_id).await?;
-    if ranked_data.is_none() {
-        return Ok(Vec::new());
+) -> Result<PlayerStats, Box<dyn std::error::Error + Send + Sync>> {
+    let mut player_stats = profile::get(summoner_name, region, season_id).await?;
+
+    if player_stats.games == 0 {
+        return Ok(player_stats);
     }
 
-    let ranked_data = ranked_data.unwrap();
+    let games = match_history::get(summoner_name, region, season_id, player_stats.games).await;
 
-    let num_games = ranked_data.losses.unwrap() + ranked_data.wins.unwrap();
+    let stats = get_stats_by_champion(games);
 
-    let games = match_history::get(summoner_name, region, season_id, num_games).await;
+    player_stats.set_champion_stats(stats);
 
-    Ok(games)
+    Ok(player_stats)
 }

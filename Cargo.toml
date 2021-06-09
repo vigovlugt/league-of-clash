@@ -3,5 +3,6 @@
 members = [
     "league-of-clash",
     "cli",
-    "functions"
+    "functions",
+    "web"
 ]

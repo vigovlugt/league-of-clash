@@ -1,6 +1,7 @@
 import React from "react";
-import DraftContext from "../../context/DraftContext";
 import IBan from "../../models/IBan";
+import { BAN_PHASE_1, BAN_PHASE_2 } from "../../models/Phase";
+import useStore from "../../store/DraftStore";
 
 const DDRAGON_URL = process.env.NEXT_PUBLIC_DDRAGON_URL;
 
@@ -9,12 +10,28 @@ interface IProps {
 }
 
 const Ban: React.FC<IProps> = ({ ban }) => {
-    const { championData } = React.useContext(DraftContext);
+    const championData = useStore((store) => store.championData);
+    const phase = useStore((store) => store.phase);
+    const setBan = useStore((store) => store.setAllyBan);
+    const isBanPhase = [BAN_PHASE_1, BAN_PHASE_2].includes(phase);
 
     const banIds = ban.champion_ids.map((id) => championData[id.toString()].id);
 
+    const onClick = () => {
+        if (phase === BAN_PHASE_1) {
+            ban.champion_ids.forEach((id, i) => {
+                setBan(i, id.toString());
+            });
+        }
+    };
+
     return (
-        <div className="bg-dark rounded p-4 flex justify-between items-center mb-4">
+        <div
+            className={`bg-dark rounded p-4 flex justify-between items-center mb-4 ${
+                isBanPhase ? "cursor-pointer" : ""
+            }`}
+            onClick={onClick}
+        >
             <div className="flex">
                 {banIds.map((id) => (
                     <div

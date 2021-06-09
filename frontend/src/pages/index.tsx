@@ -10,12 +10,12 @@ import toast from "react-hot-toast";
 export default function IndexPage() {
     const router = useRouter();
 
-    const [team, setTeam] = useState("");
+    const [allyTeam, setAllyTeam] = useState("");
+    const [enemyTeam, setEnemyTeam] = useState("");
     const [player, setPlayer] = useState("");
 
-    const searchTeam = (e: FormEvent) => {
-        e.preventDefault();
-        const players = [
+    const getPlayers = (team: string) =>
+        [
             ...new Set(
                 team
                     .split(",")
@@ -24,18 +24,29 @@ export default function IndexPage() {
             ),
         ].sort();
 
-        if (players.length != 5) {
-            toast("A team needs 5 players", {
-                style: {
-                    background: "#202020",
-                    color: "#fff",
-                },
-                position: "top-right",
-            });
-            return;
+    const createToast = (str: string) =>
+        toast(str, {
+            style: {
+                background: "#202020",
+                color: "#fff",
+            },
+            position: "top-right",
+        });
+
+    const searchTeam = (e: FormEvent) => {
+        e.preventDefault();
+        const allyPlayers = getPlayers(allyTeam);
+        const enemyPlayers = getPlayers(enemyTeam);
+
+        if (allyPlayers.length != 5) {
+            return createToast("Ally team doesn't have 5 players");
         }
 
-        router.push(`/team/${players.join("+")}`);
+        if (enemyPlayers.length != 5) {
+            return createToast("Enemy team doesn't have 5 players");
+        }
+
+        router.push(`/team/${allyPlayers.join("+")}/${enemyPlayers.join("+")}`);
     };
 
     const searchPlayer = (e: FormEvent) => {
@@ -44,10 +55,6 @@ export default function IndexPage() {
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row">
-            <Head>
-                <title>League of Clash</title>
-                <meta name="description" content="League of Clash" />
-            </Head>
             <div className="relative w-full h-screen">
                 <div className="bg-dark font-header flex justify-center items-center z-10 absolute inset-0 overflow-hidden">
                     <ClashLogo className="w-[800px] absolute text-white opacity-5 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2" />
@@ -71,7 +78,7 @@ export default function IndexPage() {
             <div className="bg-primary w-full flex justify-center items-center text-dark h-screen">
                 <div className="flex flex-col items-center">
                     <h2 className="text-5xl font-header uppercase mb-4">
-                        Search Team
+                        Clash
                     </h2>
                     <TeamHeader className="w-96 text-dark">
                         <TeamIcon className="w-6" />
@@ -80,11 +87,24 @@ export default function IndexPage() {
                     <form className="mt-2 w-full" onSubmit={searchTeam}>
                         <input
                             className="bg-dark rounded-md p-3 text-white focus:outline-none w-full placeholder-white placeholder-opacity-30"
-                            placeholder="NoWoWFreeWin, g2 jerkkIes, InsaneDanishDude, Yami Sukehiro, Sammy Winchester"
-                            onChange={(e) => setTeam(e.target.value)}
-                            value={team}
+                            placeholder="Ally team"
+                            onChange={(e) => setAllyTeam(e.target.value)}
+                            value={allyTeam}
                             name="clash-team"
                         />
+                        <input
+                            className="bg-dark rounded-md p-3 text-white focus:outline-none w-full placeholder-white placeholder-opacity-30 mt-4"
+                            placeholder="Enemy team"
+                            onChange={(e) => setEnemyTeam(e.target.value)}
+                            value={enemyTeam}
+                            name="clash-team"
+                        />
+                        <button
+                            type="submit"
+                            className="font-header text-dark text-lg text-center px-3 py-2 mt-4 rounded-md border-2 border-dark w-full"
+                        >
+                            Go
+                        </button>
                     </form>
                     {/* TODO:REGION */}
 

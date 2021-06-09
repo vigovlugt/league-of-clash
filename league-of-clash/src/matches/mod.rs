@@ -1,5 +1,7 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub struct Match {
     pub assists: i64,
     pub champion_id: i64,

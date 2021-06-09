@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import DraftContext from "../../context/DraftContext";
-import IChampionStats from "../../models/IChampionStats";
+import IPlayerStats from "../../models/IPlayerStats";
 import Ban from "./Ban";
 
 interface IProps {
-    teamStats: { [summonerName: string]: IChampionStats[] };
+    playerStats: IPlayerStats[];
 }
 
-const Bans: React.FC<IProps> = ({ teamStats }) => {
+const Bans: React.FC<IProps> = ({ playerStats }) => {
     const [bans, setBans] = React.useState([]);
 
     useEffect(() => {
@@ -17,7 +16,7 @@ const Bans: React.FC<IProps> = ({ teamStats }) => {
 
         // @ts-ignore
         import("league-of-clash").then((loc) => {
-            const bans = loc.get_bans(teamStats);
+            const bans = loc.get_bans(playerStats);
             setBans(bans);
         });
     }, []);

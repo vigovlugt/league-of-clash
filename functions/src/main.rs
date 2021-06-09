@@ -5,12 +5,6 @@ use std::env;
 use std::net::Ipv4Addr;
 use warp::Filter;
 
-/*
-export PKG_CONFIG_ALLOW_CROSS=1
-export OPENSSL_STATIC=true
-export OPENSSL_DIR=/musl
-*/
-
 #[derive(Deserialize)]
 struct ChampionStatsTeamParams {
     team: String,
@@ -19,6 +13,8 @@ struct ChampionStatsTeamParams {
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+
     let server = warp::get()
         .and(warp::path("api"))
         .and(warp::path("championstats"))
@@ -43,6 +39,8 @@ async fn champion_stats_team(params: String) -> Result<impl warp::Reply, warp::R
         .collect::<Vec<String>>();
 
     let default_region = String::from("euw1");
+
+    log::info!("Getting champion stats for {}", players.join(", "));
 
     let team = Team::new(players, params.region.unwrap_or(default_region));
 

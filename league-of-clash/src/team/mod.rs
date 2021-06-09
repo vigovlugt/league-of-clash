@@ -1,7 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-
-use crate::champion_stats::{self, champion_stats::ChampionStats};
 
 #[derive(Serialize, Deserialize)]
 pub struct Team {
@@ -12,29 +9,5 @@ pub struct Team {
 impl Team {
     pub fn new(players: Vec<String>, region: String) -> Self {
         Team { players, region }
-    }
-
-    pub async fn get_champion_stats(
-        &self,
-        season_id: i64,
-    ) -> Result<HashMap<String, Vec<ChampionStats>>, Box<dyn std::error::Error + Send + Sync>> {
-        let futures = self
-            .players
-            .iter()
-            .map(|p| champion_stats::get_champion_stats_for_player(p, &self.region, season_id))
-            .collect::<Vec<_>>();
-
-        let results = futures::future::join_all(futures).await;
-
-        let mut stats_by_player = HashMap::new();
-
-        for res in results {
-            let (summoner_name, matches) =
-                res.expect("Something has gone wrong while getting matches.");
-
-            stats_by_player.insert(summoner_name, matches);
-        }
-
-        Ok(stats_by_player)
     }
 }
