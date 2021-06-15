@@ -132,6 +132,39 @@ export function get_bans(player_stats) {
     }
 }
 
+/**
+* @param {any} player_stats
+* @param {string} dataset_str
+* @returns {any}
+*/
+export function create_predictor(player_stats, dataset_str) {
+    try {
+        var ptr0 = passStringToWasm0(dataset_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.create_predictor(addBorrowedObject(player_stats), ptr0, len0);
+        return takeObject(ret);
+    } finally {
+        heap[stack_pointer++] = undefined;
+    }
+}
+
+/**
+* @param {any} predictor
+* @param {any} team
+* @param {any} draft
+* @returns {any}
+*/
+export function get_predictions(predictor, team, draft) {
+    try {
+        var ret = wasm.get_predictions(addBorrowedObject(predictor), addBorrowedObject(team), addBorrowedObject(draft));
+        return takeObject(ret);
+    } finally {
+        heap[stack_pointer++] = undefined;
+        heap[stack_pointer++] = undefined;
+        heap[stack_pointer++] = undefined;
+    }
+}
+
 export function __wbindgen_json_serialize(arg0, arg1) {
     const obj = getObject(arg1);
     var ret = JSON.stringify(obj === undefined ? null : obj);

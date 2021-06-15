@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getChampions } from "../../../api/ddragon";
 import Spinner from "../../../components/svg/Spinner";
 import PlayerStats from "../../../components/team/PlayerStats";
@@ -18,13 +18,12 @@ import useStore from "../../../store/DraftStore";
 import PickBanPhasePanel from "../../../components/team/PickBanPhasePanel";
 import Team from "../../../models/Team";
 import Bans from "../../../components/ban/Bans";
-import PickBanSummary from "../../../components/team/PickBanSummary";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface IProps {
-    allyPlayerStats: IPlayerStats[];
-    enemyPlayerStats: IPlayerStats[];
+    allyPlayerStats: { [player: string]: IPlayerStats };
+    enemyPlayerStats: { [player: string]: IPlayerStats };
     championData: { [key: number]: IChampion };
 }
 
@@ -36,7 +35,18 @@ const TeamPage: React.FC<IProps> = ({
     const router = useRouter();
 
     const setChampionData = useStore((store) => store.setChampionData);
+    const setPlayerStats = useStore((store) => store.setPlayerStats);
     setChampionData(championData);
+    setPlayerStats(allyPlayerStats, enemyPlayerStats);
+
+    const setLeagueOfClash = useStore((store) => store.setLeagueOfClash);
+    useEffect(() => {
+        if (process.browser && enemyPlayerStats) {
+            import("league-of-clash").then((loc) => {
+                setLeagueOfClash(loc, enemyPlayerStats);
+            });
+        }
+    }, [enemyPlayerStats]);
 
     const phase = useStore((store) => store.phase);
     const nextPhase = useStore((store) => store.nextPhase);
@@ -74,10 +84,10 @@ const TeamPage: React.FC<IProps> = ({
                     {phase !== SCOUT_PHASE && phase !== GAME && (
                         <PickBanPhasePanel team={Team.Ally} />
                     )}
-                    <div className="p-4 h-full overflow-y-auto">
-                        {phase != SCOUT_PHASE && phase != GAME && (
+                    <div className="px-4 py-3 h-full overflow-y-auto">
+                        {/* {phase != SCOUT_PHASE && phase != GAME && (
                             <PickBanSummary />
-                        )}
+                        )} */}
 
                         <div className="flex space-x-2 items-end mb-2">
                             <h2
@@ -111,9 +121,10 @@ const TeamPage: React.FC<IProps> = ({
                                         : "auto",
                             }}
                         >
-                            {(activeTeam == Team.Ally
-                                ? allyPlayerStats
-                                : enemyPlayerStats
+                            {Object.values(
+                                activeTeam == Team.Ally
+                                    ? allyPlayerStats
+                                    : enemyPlayerStats
                             ).map((p) => (
                                 <PlayerStats
                                     playerStats={p}
@@ -172,7 +183,14 @@ export async function getStaticPaths() {
 async function getPlayerStats(team: string) {
     const API_URL = process.env.API_URL;
 
-    const res = await fetch(API_URL + "api/team/euw1/" + team);
+    const res = await fetch(
+        API_URL +
+            "api/team/euw1/" +
+            team
+                .split("+")
+                .map((p) => encodeURIComponent(p))
+                .join("+")
+    );
 
     return await res.json();
 }

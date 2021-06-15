@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use league_of_clash_shared::stats::Stats;
+
 use crate::{champion_score::champion_score_tracker::ChampionScoreTracker, matches::Match};
 
 use super::champion_stats::ChampionStats;
@@ -17,7 +21,19 @@ impl ChampionStatsCreator {
             total_wins: 0,
             total_games: 0,
             total_ps_games: 0,
-            total: ChampionStats::new(champion_id, 0f64, 0f64, 0f64, 0f64, 0f64, 0f64, 0, 0, 0.0),
+            total: ChampionStats::new(
+                champion_id,
+                0f64,
+                0f64,
+                0f64,
+                0f64,
+                0f64,
+                0f64,
+                0,
+                0,
+                0.0,
+                HashMap::new(),
+            ),
             score_tracker: ChampionScoreTracker::default(),
         }
     }
@@ -25,10 +41,18 @@ impl ChampionStatsCreator {
     pub fn add_game(&mut self, game: &Match) {
         assert_eq!(self.total.champion_id, game.champion_id);
 
+        let stats_by_role = self
+            .total
+            .stats_by_role
+            .entry(game.role)
+            .or_insert(Stats::default());
+
         self.total_games += 1;
+        stats_by_role.games += 1;
 
         if game.win {
             self.total_wins += 1;
+            stats_by_role.wins += 1;
         }
 
         self.total.kills += game.kills as f64;
@@ -65,6 +89,7 @@ impl ChampionStatsCreator {
             self.total_wins,
             self.total_games,
             self.score_tracker.get_score(),
+            self.total.stats_by_role,
         )
     }
 }

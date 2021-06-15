@@ -1,33 +1,46 @@
 import create from "zustand";
 import Action from "../models/Action";
 import IChampion from "../models/IChampion";
+import IPlayerStats from "../models/IPlayerStats";
 import { PHASES, SCOUT_PHASE } from "../models/Phase";
 import Team from "../models/Team";
 
 type DraftState = {
-    championData: { [key: string]: IChampion };
-    phase: string;
+    leagueOfClash: any;
+    roleChampionPlayerPredictor: any;
 
+    setLeagueOfClash: (leagueOfClash: any, playerStats: any) => void;
+
+    allyPlayerStats: { [player: string]: IPlayerStats };
+    enemyPlayerStats: { [player: string]: IPlayerStats };
+    setPlayerStats: (
+        allyPlayerStats: { [player: string]: IPlayerStats },
+        enemyPlayerStats: { [player: string]: IPlayerStats }
+    ) => void;
+
+    championData: { [key: string]: IChampion };
     setChampionData: (championData: { [key: string]: IChampion }) => void;
+
+    phase: string;
     setPhase: (phase: string) => void;
     nextPhase: () => void;
 
-    allyBans: (string | null)[];
-    setAllyBan: (i: number, id: string) => void;
-    enemyBans: (string | null)[];
-    setEnemyBan: (i: number, id: string) => void;
+    allyBans: (number | null)[];
+    setAllyBan: (i: number, id: number) => void;
+    enemyBans: (number | null)[];
+    setEnemyBan: (i: number, id: number) => void;
 
-    allyPicks: (string | null)[];
-    setAllyPick: (i: number, id: string) => void;
-    enemyPicks: (string | null)[];
-    setEnemyPick: (i: number, id: string) => void;
+    allyPicks: (number | null)[];
+    setAllyPick: (i: number, id: number) => void;
+    enemyPicks: (number | null)[];
+    setEnemyPick: (i: number, id: number) => void;
 
-    getPickBannedChampions: () => string[];
+    getPickBannedChampions: () => number[];
     setPickBan: (
         type: Action,
         team: Team,
         index: number,
-        championId: string
+        championId: number
     ) => void;
 };
 
@@ -35,6 +48,24 @@ const nextPhase = (phase: string) =>
     PHASES[PHASES.findIndex((p) => p.id === phase) + 1].id;
 
 const useStore = create<DraftState>((set, get) => ({
+    leagueOfClash: null,
+    roleChampionPlayerPredictor: null,
+    setLeagueOfClash: async (leagueOfClash: any, playerStats: any) => {
+        const res = await fetch("/dataset.json");
+        const text = await res.text();
+
+        const predictor = leagueOfClash.create_predictor(playerStats, text);
+
+        set(() => ({ leagueOfClash, roleChampionPlayerPredictor: predictor }));
+    },
+
+    allyPlayerStats: {},
+    enemyPlayerStats: {},
+    setPlayerStats: (
+        allyPlayerStats: { [player: string]: IPlayerStats },
+        enemyPlayerStats: { [player: string]: IPlayerStats }
+    ) => set(() => ({ allyPlayerStats, enemyPlayerStats })),
+
     championData: {},
     setChampionData: (championData: { [key: string]: IChampion }) =>
         set(() => ({ championData })),
@@ -44,7 +75,7 @@ const useStore = create<DraftState>((set, get) => ({
     nextPhase: () => set((store) => ({ phase: nextPhase(store.phase) })),
 
     allyBans: [null, null, null, null, null],
-    setAllyBan: (i: number, id: string) =>
+    setAllyBan: (i: number, id: number) =>
         set((store) => {
             const allyBans = [...store.allyBans];
             allyBans[i] = id;
@@ -53,7 +84,7 @@ const useStore = create<DraftState>((set, get) => ({
         }),
 
     enemyBans: [null, null, null, null, null],
-    setEnemyBan: (i: number, id: string) =>
+    setEnemyBan: (i: number, id: number) =>
         set((store) => {
             const enemyBans = [...store.enemyBans];
             enemyBans[i] = id;
@@ -62,7 +93,7 @@ const useStore = create<DraftState>((set, get) => ({
         }),
 
     allyPicks: [null, null, null, null, null],
-    setAllyPick: (i: number, id: string) =>
+    setAllyPick: (i: number, id: number) =>
         set((store) => {
             const allyPicks = [...store.allyPicks];
             allyPicks[i] = id;
@@ -71,7 +102,7 @@ const useStore = create<DraftState>((set, get) => ({
         }),
 
     enemyPicks: [null, null, null, null, null],
-    setEnemyPick: (i: number, id: string) =>
+    setEnemyPick: (i: number, id: number) =>
         set((store) => {
             const enemyPicks = [...store.enemyPicks];
             enemyPicks[i] = id;
@@ -84,14 +115,14 @@ const useStore = create<DraftState>((set, get) => ({
 
         return [...allyBans, ...enemyBans, ...allyPicks, ...enemyPicks].filter(
             (c) => c != null
-        ) as string[];
+        ) as number[];
     },
 
     setPickBan: (
         type: Action,
         team: Team,
         index: number,
-        championId: string
+        championId: number
     ) => {
         const store = get();
         const set = {

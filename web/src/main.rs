@@ -17,7 +17,7 @@ async fn champion_stats_team(req: HttpRequest) -> impl Responder {
     let team = Team::new(players, region.to_string());
 
     let stats = team
-        .get_champion_stats(utils::get_current_season())
+        .get_player_stats(utils::get_current_season())
         .await
         .unwrap();
 

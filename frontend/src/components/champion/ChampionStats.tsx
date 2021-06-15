@@ -14,57 +14,62 @@ const DDRAGON_URL = process.env.NEXT_PUBLIC_DDRAGON_URL;
 
 interface IProps {
     championStats: IChampionStats;
+    isPickBanned: boolean;
 }
 
-const ChampionStats: React.FC<IProps> = ({ championStats }) => {
+const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
     const championData = useStore((store) => store.championData);
 
-    const allyBans = useStore((store) => store.allyBans);
-    const enemyBans = useStore((store) => store.enemyBans);
-    const allyPicks = useStore((store) => store.allyPicks);
-    const enemyPicks = useStore((store) => store.enemyPicks);
-    const pickBans = useStore((store) => store.getPickBannedChampions)();
     const setPickBan = useStore((store) => store.setPickBan);
-
-    const isPickBanned = pickBans.includes(
-        championStats.champion_id.toString()
-    );
 
     const champion = championData[championStats.champion_id.toString()];
 
-    const [_, drag] = useDrag(() => ({
-        type: CHAMPION,
-        item: { champion },
-        end: (item, monitor) => {
-            const dropResult =
-                monitor.getDropResult<{
-                    team: Team;
-                    type: Action;
-                    index: number;
-                }>();
-            if (item && dropResult) {
-                console.log(dropResult, item);
-                setPickBan(
-                    dropResult.type,
-                    dropResult.team,
-                    dropResult.index,
-                    item.champion.key
-                );
-            }
-        },
-    }));
+    const [_, drag] = useDrag(
+        () => ({
+            type: CHAMPION,
+            item: { champion },
+            canDrag: !isPickBanned,
+            end: (item, monitor) => {
+                const dropResult =
+                    monitor.getDropResult<{
+                        team: Team;
+                        type: Action;
+                        index: number;
+                    }>();
+                if (item && dropResult && !isPickBanned) {
+                    setPickBan(
+                        dropResult.type,
+                        dropResult.team,
+                        dropResult.index,
+                        item.champion.key
+                    );
+                }
+            },
+        }),
+        [champion, isPickBanned]
+    );
+
+    const iconSize = isPickBanned
+        ? "w-6 h-6 min-w-6 min-h-6"
+        : "w-12 h-12 min-w-12 min-h-12";
+
+    const padding = isPickBanned ? "px-6 py-2" : "px-6 py-4";
 
     return (
-        <tr className={isPickBanned ? "opacity-20" : undefined}>
-            <td className={`px-6 py-4 whitespace-nowrap`}>
+        <tr
+            className={`${isPickBanned ? "opacity-20" : undefined} ${
+                isPickBanned ? "" : "cursor-move"
+            }`}
+            ref={drag}
+        >
+            <td className={`${padding} whitespace-nowrap`}>
                 <div className="flex items-center">
                     <div
-                        ref={drag}
-                        className="relative w-12 h-12 min-w-12 min-h-12 overflow-hidden mr-4 cursor-move"
+                        className={`relative overflow-hidden mr-4  ${iconSize}`}
                     >
                         <img
                             src={`${DDRAGON_URL}cdn/11.11.1/img/champion/${champion.id}.png`}
-                            className="w-12 h-12 min-w-12 min-h-12 absolute inset-0"
+                            className={`absolute inset-0 ${iconSize}`}
                             style={{ transform: "scale(1.1,1.1)" }}
                         ></img>
                     </div>
@@ -76,19 +81,21 @@ const ChampionStats: React.FC<IProps> = ({ championStats }) => {
                     </a>
                 </div>
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right">
+            <td className={`whitespace-nowrap text-right ${padding}`}>
                 {getWinrate(championStats)}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right">
+            <td className={`whitespace-nowrap text-right ${padding}`}>
                 {championStats.games}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right">
+            <td className={`whitespace-nowrap text-right ${padding}`}>
                 {getKda(championStats)}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right">
+            <td className={`whitespace-nowrap text-right ${padding}`}>
                 {getCarryScore(championStats)}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right text-primary">
+            <td
+                className={`whitespace-nowrap text-right ${padding} text-primary`}
+            >
                 {(championStats.score * 100).toFixed(2)}
             </td>
         </tr>

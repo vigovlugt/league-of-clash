@@ -89,7 +89,7 @@ pub async fn run_team(
 
     let team = Team::new(players, region.to_owned());
 
-    let stats = team.get_champion_stats(utils::get_current_season()).await?;
+    let stats = team.get_player_stats(utils::get_current_season()).await?;
 
     for (player, champ_stats) in stats.iter() {
         print_player(&player, &champ_stats);

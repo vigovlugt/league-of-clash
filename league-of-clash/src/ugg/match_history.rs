@@ -1,4 +1,5 @@
 use graphql_client::*;
+use league_of_clash_shared::role::Role;
 
 use crate::matches::Match;
 
@@ -29,6 +30,7 @@ impl Match {
             ps_hard_carry: ugg_match.ps_hard_carry.unwrap(),
             ps_team_play: ugg_match.ps_team_play.unwrap(),
             win: ugg_match.win.unwrap(),
+            role: Role::from_i64(ugg_match.role.unwrap()),
         }
     }
 }

@@ -16,7 +16,7 @@ impl BanCreator {
         }
     }
 
-    pub fn add_summoner_stats(&mut self, summoner_name: &str, stats: &Vec<ChampionStats>) {
+    pub fn add_summoner_stats(&mut self, summoner_name: &str, stats: &Vec<&ChampionStats>) {
         let champion_size = stats.iter().filter(|x| x.score > 0.0).count();
         let top_3 = champion_size.clamp(0, 3);
 

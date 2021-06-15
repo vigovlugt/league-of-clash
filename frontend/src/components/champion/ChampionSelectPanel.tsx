@@ -4,7 +4,7 @@ import BackIcon from "../svg/BackIcon";
 import ChampionOption from "./ChampionOption";
 
 interface IProps {
-    onSelect: (id: string) => void;
+    onSelect: (id: number) => void;
     onClose: () => void;
 }
 
@@ -19,13 +19,13 @@ const ChampionSelectPanel: React.FC<IProps> = ({ onSelect, onClose }) => {
 
     useEffect(() => {
         if (input.current != null) {
-            input.current.focus();
+            (input.current as any).focus();
         }
     }, [input]);
 
     const champions = Object.values(championData).filter(
         (c) =>
-            !pickBannedChampions.includes(c.key) &&
+            !pickBannedChampions.includes(+c.key) &&
             (!query || c.name.toLowerCase().includes(query.toLowerCase()))
     );
 
@@ -33,7 +33,7 @@ const ChampionSelectPanel: React.FC<IProps> = ({ onSelect, onClose }) => {
         e.preventDefault();
 
         if (champions.length == 0) return;
-        onSelect(champions[0].key);
+        onSelect(+champions[0].key);
     };
 
     return (
@@ -63,7 +63,7 @@ const ChampionSelectPanel: React.FC<IProps> = ({ onSelect, onClose }) => {
                     <ChampionOption
                         key={c.key}
                         champion={c}
-                        onClick={() => onSelect(c.key)}
+                        onClick={() => onSelect(+c.key)}
                     />
                 ))}
             </div>

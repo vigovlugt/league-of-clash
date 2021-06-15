@@ -1,4 +1,5 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
+use league_of_clash_shared::role::Role;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -15,6 +16,7 @@ pub struct Match {
     pub ps_hard_carry: i64,
     pub ps_team_play: i64,
     pub win: bool,
+    pub role: Role,
 }
 
 impl Match {

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import IPlayerStats, { getWinrate } from "../../models/IPlayerStats";
+import useStore from "../../store/DraftStore";
 import { getRankClass } from "../../utils/rank";
 import ChampionStats from "../champion/ChampionStats";
 
@@ -10,9 +11,27 @@ interface IProps {
 const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
     const [showMore, setShowMore] = useState(false);
 
+    const championStats = useMemo(
+        () =>
+            Object.values(playerStats.champion_stats).sort((a, b) =>
+                a.score === b.score ? b.games - a.games : b.score - a.score
+            ),
+        [playerStats.champion_stats]
+    );
+
     const showRank = !["MASTER", "GRANDMASTER", "CHALLENGER"].includes(
         playerStats.tier
     );
+
+    const allyBans = useStore((store) => store.allyBans);
+    const enemyBans = useStore((store) => store.enemyBans);
+    const allyPicks = useStore((store) => store.allyPicks);
+    const enemyPicks = useStore((store) => store.enemyPicks);
+    const pickBans = useStore((store) => store.getPickBannedChampions)();
+
+    const isPickBanned = (id: string) => pickBans.includes(id);
+
+    const numChampionStats = showMore ? undefined : 5;
 
     return (
         <div>
@@ -67,14 +86,15 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
                         </tr>
                     </thead>
                     <tbody className="bg-gray-800 divide-y divide-gray-700">
-                        {playerStats.champion_stats
-                            .slice(0, showMore ? undefined : 5)
-                            .map((c) => (
-                                <ChampionStats
-                                    key={c.champion_id}
-                                    championStats={c}
-                                />
-                            ))}
+                        {championStats.slice(0, numChampionStats).map((c) => (
+                            <ChampionStats
+                                key={c.champion_id}
+                                isPickBanned={isPickBanned(
+                                    c.champion_id.toString()
+                                )}
+                                championStats={c}
+                            />
+                        ))}
                     </tbody>
                 </table>
             </div>

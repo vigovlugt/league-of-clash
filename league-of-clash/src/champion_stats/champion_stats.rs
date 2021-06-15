@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use league_of_clash_shared::{role::Role, stats::Stats};
 use serde::{Deserialize, Serialize};
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct ChampionStats {
@@ -15,6 +18,8 @@ pub struct ChampionStats {
     pub games: i64,
 
     pub score: f64,
+
+    pub stats_by_role: HashMap<Role, Stats>,
 }
 
 impl ChampionStats {
@@ -29,6 +34,7 @@ impl ChampionStats {
         wins: i64,
         games: i64,
         score: f64,
+        stats_by_role: HashMap<Role, Stats>,
     ) -> Self {
         ChampionStats {
             champion_id,
@@ -41,6 +47,7 @@ impl ChampionStats {
             wins,
             games,
             score,
+            stats_by_role,
         }
     }
 

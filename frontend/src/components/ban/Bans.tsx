@@ -1,25 +1,25 @@
 import React, { useEffect } from "react";
 import IPlayerStats from "../../models/IPlayerStats";
+import useStore from "../../store/DraftStore";
 import Ban from "./Ban";
 
 interface IProps {
-    playerStats: IPlayerStats[];
+    playerStats: { [player: string]: IPlayerStats };
 }
 
 const Bans: React.FC<IProps> = ({ playerStats }) => {
     const [bans, setBans] = React.useState([]);
 
+    const leagueOfClash = useStore((store) => store.leagueOfClash);
+
     useEffect(() => {
-        if (!process.browser) {
+        if (!leagueOfClash) {
             return;
         }
 
-        // @ts-ignore
-        import("league-of-clash").then((loc) => {
-            const bans = loc.get_bans(playerStats);
-            setBans(bans);
-        });
-    }, []);
+        const bans = leagueOfClash.get_bans(playerStats);
+        setBans(bans);
+    }, [leagueOfClash]);
 
     return (
         <div>

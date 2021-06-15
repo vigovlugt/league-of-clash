@@ -10,11 +10,16 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+league-of-clash-shared = {path = "../shared"}
 log = "0.4.0"
 serde = {version="1.0.126", features = ["derive"] }
+serde_json="1.0.64"
 time="0.2.26"
 itertools="0.10.0"
 chrono="0.4.19"
+
+[dev-dependencies]
+tokio = { version = "0.2", features = ["full"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 futures = "0.3.15"

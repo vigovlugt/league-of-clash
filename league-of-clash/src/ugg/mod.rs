@@ -1,4 +1,6 @@
-use crate::{champion_stats::get_stats_by_champion, player_stats::PlayerStats};
+use crate::{
+    champion_stats::get_stats_by_champion, player_stats::PlayerStats, role_stats::get_stats_by_role,
+};
 
 pub const UGG_API: &str = "https://u.gg/api";
 
@@ -19,9 +21,11 @@ pub async fn get_player_stats(
 
     let games = match_history::get(summoner_name, region, season_id, player_stats.games).await;
 
-    let stats = get_stats_by_champion(games);
+    let champion_stats = get_stats_by_champion(&games);
+    let role_stats = get_stats_by_role(&games);
 
-    player_stats.set_champion_stats(stats);
+    player_stats.set_champion_stats(champion_stats);
+    player_stats.set_role_stats(role_stats);
 
     Ok(player_stats)
 }

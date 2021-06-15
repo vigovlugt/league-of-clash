@@ -1,24 +1,36 @@
-query FetchMatchSummaries($summonerName: String!, $regionId: String!, $seasonId: Int!, $page: Int!) {
-    fetchPlayerMatchSummaries(page: $page, queueType: [420], regionId: $regionId, seasonId: $seasonId, summonerName: $summonerName) {
-        ...PlayerMatchHistory
-    }
+query FetchMatchSummaries(
+  $summonerName: String!
+  $regionId: String!
+  $seasonId: Int!
+  $page: Int!
+) {
+  fetchPlayerMatchSummaries(
+    page: $page
+    queueType: [420]
+    regionId: $regionId
+    seasonId: $seasonId
+    summonerName: $summonerName
+  ) {
+    ...PlayerMatchHistory
+  }
 }
 
 fragment PlayerMatchHistory on PlayerMatchSummaries {
-    finishedMatchSummaries
-    totalNumMatches
-    matchSummaries {
-        assists
-        championId
-        deaths
-        killParticipation
-        kills
-        matchCreationTime
-        matchDuration
-        matchId
-        summonerName
-        psHardCarry
-        psTeamPlay
-        win
-    }
+  finishedMatchSummaries
+  totalNumMatches
+  matchSummaries {
+    assists
+    championId
+    deaths
+    killParticipation
+    kills
+    matchCreationTime
+    matchDuration
+    matchId
+    summonerName
+    psHardCarry
+    psTeamPlay
+    win
+    role
+  }
 }
