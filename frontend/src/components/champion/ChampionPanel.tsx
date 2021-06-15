@@ -100,7 +100,10 @@ const ChampionPanel: React.FC<IProps> = ({
                                             }) => JSX.Element;
 
                                             return (
-                                                <div className="flex flex-col items-center">
+                                                <div
+                                                    className="flex flex-col items-center"
+                                                    key={Math.random()}
+                                                >
                                                     <Icon className="w-10" />
                                                     <span
                                                         className="block text-xs font-medium uppercase tracking-wider"

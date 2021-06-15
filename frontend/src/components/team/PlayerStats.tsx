@@ -39,6 +39,7 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
                 <a
                     href={`https://u.gg/lol/profile/euw1/${playerStats.summoner_name}/overview`}
                     target="_blank"
+                    rel="noreferrer"
                 >
                     <h3 className="text-3xl font-header">
                         {playerStats.summoner_name}

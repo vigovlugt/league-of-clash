@@ -76,6 +76,7 @@ const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
                     <a
                         href={`https://u.gg/lol/champions/${champion.id}/build`}
                         target="_blank"
+                        rel="noreferrer"
                     >
                         <h4 className="text-xl font-header">{champion.name}</h4>
                     </a>
