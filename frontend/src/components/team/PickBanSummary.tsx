@@ -56,7 +56,7 @@ const PickBanSummaryTeam: React.FC<ITeamProps> = ({ team }) => {
 };
 
 interface IChampionProps {
-    championId: string | null;
+    championId: number | null;
     type: Action;
 }
 

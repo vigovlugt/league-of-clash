@@ -1,3 +1,5 @@
+use std::env;
+
 use actix_web::{middleware, web, App, HttpRequest, HttpServer, Responder};
 use env_logger;
 use league_of_clash::{team::Team, utils};
@@ -35,7 +37,13 @@ async fn main() -> std::io::Result<()> {
             web::get().to(champion_stats_team),
         )
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind((
+        "127.0.0.1",
+        env::var("PORT")
+            .unwrap_or(String::from("3001"))
+            .parse::<u16>()
+            .unwrap(),
+    ))?
     .run()
     .await
 }

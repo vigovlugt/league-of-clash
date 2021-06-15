@@ -29,7 +29,7 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
     const enemyPicks = useStore((store) => store.enemyPicks);
     const pickBans = useStore((store) => store.getPickBannedChampions)();
 
-    const isPickBanned = (id: string) => pickBans.includes(id);
+    const isPickBanned = (id: number) => pickBans.includes(id);
 
     const numChampionStats = showMore ? undefined : 5;
 
@@ -89,9 +89,7 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
                         {championStats.slice(0, numChampionStats).map((c) => (
                             <ChampionStats
                                 key={c.champion_id}
-                                isPickBanned={isPickBanned(
-                                    c.champion_id.toString()
-                                )}
+                                isPickBanned={isPickBanned(c.champion_id)}
                                 championStats={c}
                             />
                         ))}

@@ -20,7 +20,7 @@ const Ban: React.FC<IProps> = ({ ban }) => {
     const onClick = () => {
         if (phase === BAN_PHASE_1) {
             ban.champion_ids.forEach((id, i) => {
-                setBan(i, id.toString());
+                setBan(i, id);
             });
         }
     };

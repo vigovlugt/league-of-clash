@@ -3,13 +3,13 @@ import Select from "react-select";
 import useStore from "../../store/DraftStore";
 
 interface IProps {
-    champion: string | null;
+    championId: number | null;
     setChampion: (champion: string) => void;
     placeholder: string;
 }
 
 export const ChampionSelect: React.FC<IProps> = ({
-    champion,
+    championId: champion,
     setChampion,
     placeholder,
 }) => {
@@ -19,7 +19,7 @@ export const ChampionSelect: React.FC<IProps> = ({
     )();
 
     const options = Object.values(championData).map((c) => ({
-        value: c.key,
+        value: +c.key,
         label: c.name,
     }));
 

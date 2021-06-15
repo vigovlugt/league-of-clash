@@ -41,7 +41,7 @@ const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
                         dropResult.type,
                         dropResult.team,
                         dropResult.index,
-                        item.champion.key
+                        +item.champion.key
                     );
                 }
             },
