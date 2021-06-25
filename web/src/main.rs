@@ -1,8 +1,12 @@
 use std::env;
 
-use actix_web::{middleware, web, App, HttpRequest, HttpServer, Responder};
+mod websocket;
+
+use actix::Actor;
+use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use env_logger;
 use league_of_clash::{team::Team, utils};
+use websocket::ws_server::WsServer;
 
 async fn champion_stats_team(req: HttpRequest) -> impl Responder {
     let match_info = req.match_info();
@@ -26,21 +30,35 @@ async fn champion_stats_team(req: HttpRequest) -> impl Responder {
     web::Json(stats)
 }
 
+async fn healthcheck() -> impl Responder {
+    HttpResponse::Ok()
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "actix_web=info");
+    std::env::set_var("RUST_LOG", "info");
     env_logger::init();
 
-    HttpServer::new(|| {
-        App::new().wrap(middleware::Logger::default()).route(
-            "/api/team/{region}/{team}",
-            web::get().to(champion_stats_team),
-        )
+    let ws_manager = WsServer::default().start();
+
+    HttpServer::new(move || {
+        App::new()
+            .wrap(middleware::Logger::default())
+            .data(ws_manager.clone())
+            .route("/healthcheck", web::get().to(healthcheck))
+            .route(
+                "/api/team/{region}/{team}",
+                web::get().to(champion_stats_team),
+            )
+            .route(
+                "/ws/room/{room_id}",
+                web::get().to(websocket::websocket_handler),
+            )
     })
     .bind((
-        "127.0.0.1",
+        "0.0.0.0",
         env::var("PORT")
-            .unwrap_or(String::from("3001"))
+            .unwrap_or(String::from("8080"))
             .parse::<u16>()
             .unwrap(),
     ))?

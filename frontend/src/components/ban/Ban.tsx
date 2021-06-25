@@ -1,6 +1,6 @@
 import React from "react";
 import IBan from "../../models/IBan";
-import { BAN_PHASE_1, BAN_PHASE_2 } from "../../models/Phase";
+import { Phase } from "../../models/Phase";
 import useStore from "../../store/DraftStore";
 
 const DDRAGON_URL = process.env.NEXT_PUBLIC_DDRAGON_URL;
@@ -13,12 +13,12 @@ const Ban: React.FC<IProps> = ({ ban }) => {
     const championData = useStore((store) => store.championData);
     const phase = useStore((store) => store.phase);
     const setBan = useStore((store) => store.setAllyBan);
-    const isBanPhase = [BAN_PHASE_1, BAN_PHASE_2].includes(phase);
+    const isBanPhase = [Phase.BAN_PHASE_1, Phase.BAN_PHASE_2].includes(phase);
 
     const banIds = ban.champion_ids.map((id) => championData[id.toString()].id);
 
     const onClick = () => {
-        if (phase === BAN_PHASE_1) {
+        if (phase === Phase.BAN_PHASE_1) {
             ban.champion_ids.forEach((id, i) => {
                 setBan(i, id);
             });

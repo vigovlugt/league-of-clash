@@ -4,15 +4,8 @@ import React, { useEffect, useState } from "react";
 import { getChampions } from "../../../api/ddragon";
 import Spinner from "../../../components/svg/Spinner";
 import PlayerStats from "../../../components/team/PlayerStats";
-import { Phase } from "../../../components/team/Phase";
+// import { Phase } from "../../../components/team/Phase";
 import IChampion from "../../../models/IChampion";
-import {
-    GAME,
-    PHASES,
-    PICK_PHASE_1,
-    PICK_PHASE_2,
-    SCOUT_PHASE,
-} from "../../../models/Phase";
 import IPlayerStats from "../../../models/IPlayerStats";
 import useStore from "../../../store/DraftStore";
 import PickBanPhasePanel from "../../../components/team/PickBanPhasePanel";
@@ -20,6 +13,9 @@ import Team from "../../../models/Team";
 import Bans from "../../../components/ban/Bans";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import WebSocketManager from "../../../modules/websocket/WebSocketManager";
+import { Phase, PHASES } from "../../../models/Phase";
+import PhaseComponent from "../../../components/team/Phase";
 
 interface IProps {
     allyPlayerStats: { [player: string]: IPlayerStats };
@@ -40,18 +36,23 @@ const TeamPage: React.FC<IProps> = ({
     setPlayerStats(allyPlayerStats, enemyPlayerStats);
 
     const setLeagueOfClash = useStore((store) => store.setLeagueOfClash);
+    const setWebSocketManager = useStore((store) => store.setWebSocketManager);
     useEffect(() => {
         if (process.browser && enemyPlayerStats) {
             import("league-of-clash").then((loc) => {
                 setLeagueOfClash(loc, enemyPlayerStats);
             });
+
+            setWebSocketManager(new WebSocketManager());
         }
     }, [enemyPlayerStats]);
 
     const phase = useStore((store) => store.phase);
     const nextPhase = useStore((store) => store.nextPhase);
 
-    const showAllyPlayers = [PICK_PHASE_1, PICK_PHASE_2].includes(phase);
+    const showAllyPlayers = [Phase.PICK_PHASE_1, Phase.PICK_PHASE_2].includes(
+        phase
+    );
 
     const [activeTeam, setActiveTeam] = useState(Team.Enemy);
 
@@ -76,12 +77,12 @@ const TeamPage: React.FC<IProps> = ({
                     className="bg-dark text-gray-50 overflow-y-hidden grid"
                     style={{
                         gridTemplateColumns:
-                            phase !== SCOUT_PHASE && phase !== GAME
+                            phase !== Phase.SCOUT_PHASE && phase !== Phase.GAME
                                 ? "1fr 2fr 1fr"
                                 : "auto",
                     }}
                 >
-                    {phase !== SCOUT_PHASE && phase !== GAME && (
+                    {phase !== Phase.SCOUT_PHASE && phase !== Phase.GAME && (
                         <PickBanPhasePanel team={Team.Ally} />
                     )}
                     <div className="px-4 py-3 h-full overflow-y-auto">
@@ -116,7 +117,8 @@ const TeamPage: React.FC<IProps> = ({
                             className="grid gap-4"
                             style={{
                                 gridTemplateColumns:
-                                    phase == SCOUT_PHASE || phase == GAME
+                                    phase == Phase.SCOUT_PHASE ||
+                                    phase == Phase.GAME
                                         ? "auto auto"
                                         : "auto",
                             }}
@@ -133,7 +135,7 @@ const TeamPage: React.FC<IProps> = ({
                             ))}
                         </div>
                     </div>
-                    {phase !== SCOUT_PHASE && phase !== GAME && (
+                    {phase !== Phase.SCOUT_PHASE && phase !== Phase.GAME && (
                         <PickBanPhasePanel team={Team.Enemy} />
                     )}
                 </div>
@@ -153,15 +155,15 @@ const TeamPage: React.FC<IProps> = ({
                 <div className="bg-dark w-full text-primary overflow-y-auto flex justify-between border-t border-gray-700 overflow-hidden">
                     <div className="flex items-center">
                         {PHASES.map((p) => (
-                            <Phase
-                                key={p.id}
+                            <PhaseComponent
+                                key={p.type}
                                 name={p.name}
-                                active={p.id === phase}
+                                active={p.type === phase}
                             />
                         ))}
                     </div>
                     <div className="flex justify-center items-center mr-4 ml-8">
-                        {phase != PHASES[PHASES.length - 1].id && (
+                        {phase != PHASES[PHASES.length - 1].type && (
                             <button
                                 className="bg-primary text-dark py-2 px-3 text-xl font-header border-b-4 border-primary-dark whitespace-nowrap uppercase active:border-b-0 active:mt-1 focus:outline-none"
                                 onClick={() => nextPhase()}
@@ -181,7 +183,7 @@ export async function getStaticPaths() {
 }
 
 async function getPlayerStats(team: string) {
-    const API_URL = process.env.API_URL;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     const res = await fetch(
         API_URL +

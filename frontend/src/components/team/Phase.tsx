@@ -6,7 +6,7 @@ interface IProps {
     onCLick?: Function;
 }
 
-export const Phase: React.FC<IProps> = ({ name, active }) => {
+const Phase: React.FC<IProps> = ({ name, active }) => {
     return (
         <div
             className={`pl-4 flex items-center relative ${
@@ -40,3 +40,5 @@ export const Phase: React.FC<IProps> = ({ name, active }) => {
         </div>
     );
 };
+
+export default Phase;
