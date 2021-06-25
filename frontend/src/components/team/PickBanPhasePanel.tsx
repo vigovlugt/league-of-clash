@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Action from "../../models/Action";
 import IChampionRolePlayerPrediction from "../../models/IChampionRolePlayerPrediction";
-import { BAN_PHASE_1, PICK_PHASE_1, PICK_PHASE_2 } from "../../models/Phase";
 import Team from "../../models/Team";
 import useStore from "../../store/DraftStore";
 import BanPanel from "../ban/BanPanel";
