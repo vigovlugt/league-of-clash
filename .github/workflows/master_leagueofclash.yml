@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: leagueofclash.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_209d49c1c91d44a08bec9e19b9fb79e5 }}/league-of-clash-web:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./web/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
