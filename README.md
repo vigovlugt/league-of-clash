@@ -7,3 +7,9 @@ sudo docker run --name league-of-clash-web --rm -it -p 8080:8080 league-of-clash
 // Azure
 az acr build --file web/Dockerfile --registry leagueofclash --image league-of-clash-web .
 ```
+
+# Wasm
+
+```
+wasm-pack build
+```

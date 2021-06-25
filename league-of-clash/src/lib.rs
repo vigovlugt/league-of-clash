@@ -47,7 +47,7 @@ mod tests {
                 String::from("infernoshot"),
                 String::from("pyyr"),
                 String::from("jaxverface"),
-                String::from("sneakym0nk3y"),
+                String::from("Limgardis"),
             ],
             String::from("euw1"),
         );

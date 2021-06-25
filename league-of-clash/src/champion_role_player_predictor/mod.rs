@@ -59,7 +59,7 @@ impl ChampionRolePlayerPredictor {
             for player in team.players.iter() {
                 for role in (1..=5).map(|i| Role::from_i64(i as i64)) {
                     let probability = self.calculate_probability(*champion_id, &role, player);
-                    if probability == 0.0 {
+                    if probability == 0.0 || probability.is_nan() {
                         continue;
                     }
 
