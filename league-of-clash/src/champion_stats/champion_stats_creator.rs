@@ -77,12 +77,12 @@ impl ChampionStatsCreator {
             self.total.assists as f64 / self.total_games as f64,
             self.total.kill_participation as f64 / self.total_games as f64,
             if self.total_ps_games != 0 {
-                self.total.ps_hard_carry as f64 / self.total_games as f64
+                self.total.ps_hard_carry as f64 / self.total_ps_games as f64
             } else {
                 0f64
             },
             if self.total_ps_games != 0 {
-                self.total.ps_team_play as f64 / self.total_games as f64
+                self.total.ps_team_play as f64 / self.total_ps_games as f64
             } else {
                 0f64
             },
