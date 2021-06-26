@@ -20,10 +20,10 @@ export default class WebSocketManager {
 
     private flushedDraftState: boolean = true;
 
-    constructor() {
+    constructor(allyTeam: string, enemyTeam: string) {
         this.connection = new WebSocket(
             API_URL!.replace("http", "ws") +
-                "ws/room/936DA01F9ABD4d9d80C702AF85C822A9"
+                `ws/room/euw1/${allyTeam}/${enemyTeam}`
         );
         this.connection.onopen = (e: Event) => this.onConnect(e);
         this.connection.onmessage = (e: MessageEvent) => this.onMessage(e);

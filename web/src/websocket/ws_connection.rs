@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::websocket::ws_events::MessageEvent;
 
-use super::ws_events::{ConnectEvent, DisconnectEvent, WsMessage};
+use super::ws_events::{ConnectEvent, DisconnectEvent, WsMessageEvent};
 use super::ws_server::WsServer;
 
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(15);
@@ -106,10 +106,10 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsConnection {
     }
 }
 
-impl Handler<WsMessage> for WsConnection {
+impl Handler<WsMessageEvent> for WsConnection {
     type Result = ();
 
-    fn handle(&mut self, msg: WsMessage, ctx: &mut Self::Context) {
+    fn handle(&mut self, msg: WsMessageEvent, ctx: &mut Self::Context) {
         ctx.text(msg.0);
     }
 }

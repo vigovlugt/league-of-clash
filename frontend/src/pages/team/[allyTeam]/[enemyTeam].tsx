@@ -43,16 +43,15 @@ const TeamPage: React.FC<IProps> = ({
                 setLeagueOfClash(loc, enemyPlayerStats);
             });
 
-            setWebSocketManager(new WebSocketManager());
+            const allyTeam = Object.keys(allyPlayerStats).sort().join("+");
+            const enemyTeam = Object.keys(enemyPlayerStats).sort().join("+");
+
+            setWebSocketManager(new WebSocketManager(allyTeam, enemyTeam));
         }
-    }, [enemyPlayerStats]);
+    }, [enemyPlayerStats, allyPlayerStats]);
 
     const phase = useStore((store) => store.phase);
     const nextPhase = useStore((store) => store.nextPhase);
-
-    const showAllyPlayers = [Phase.PICK_PHASE_1, Phase.PICK_PHASE_2].includes(
-        phase
-    );
 
     const [activeTeam, setActiveTeam] = useState(Team.Enemy);
 
@@ -127,12 +126,18 @@ const TeamPage: React.FC<IProps> = ({
                                 activeTeam == Team.Ally
                                     ? allyPlayerStats
                                     : enemyPlayerStats
-                            ).map((p) => (
-                                <PlayerStats
-                                    playerStats={p}
-                                    key={p.summoner_name}
-                                ></PlayerStats>
-                            ))}
+                            )
+                                .sort((a, b) =>
+                                    a.summoner_name.localeCompare(
+                                        b.summoner_name
+                                    )
+                                )
+                                .map((p) => (
+                                    <PlayerStats
+                                        playerStats={p}
+                                        key={p.summoner_name}
+                                    ></PlayerStats>
+                                ))}
                         </div>
                     </div>
                     {phase !== Phase.SCOUT_PHASE && phase !== Phase.GAME && (

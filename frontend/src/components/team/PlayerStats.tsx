@@ -23,10 +23,12 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
         playerStats.tier
     );
 
-    const allyBans = useStore((store) => store.allyBans);
-    const enemyBans = useStore((store) => store.enemyBans);
-    const allyPicks = useStore((store) => store.allyPicks);
-    const enemyPicks = useStore((store) => store.enemyPicks);
+    useStore(({ allyBans, enemyBans, allyPicks, enemyPicks }) => ({
+        allyBans,
+        enemyBans,
+        allyPicks,
+        enemyPicks,
+    }));
     const pickBans = useStore((store) => store.getPickBannedChampions)();
 
     const isPickBanned = (id: number) => pickBans.includes(id);

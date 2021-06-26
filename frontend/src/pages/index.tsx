@@ -22,7 +22,7 @@ export default function IndexPage() {
                     .map((p) => p.trim())
                     .filter((p) => p)
             ),
-        ].sort();
+        ].sort((a, b) => a.localeCompare(b));
 
     const createToast = (str: string) =>
         toast(str, {

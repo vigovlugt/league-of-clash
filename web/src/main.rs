@@ -51,7 +51,7 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(champion_stats_team),
             )
             .route(
-                "/ws/room/{room_id}",
+                "/ws/room/{region}/{allyTeam}/{enemyTeam}",
                 web::get().to(websocket::websocket_handler),
             )
     })

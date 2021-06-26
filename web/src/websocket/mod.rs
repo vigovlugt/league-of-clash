@@ -9,6 +9,7 @@ use actix_web_actors::ws;
 
 pub mod ws_connection;
 pub mod ws_events;
+pub mod ws_message;
 pub mod ws_room;
 pub mod ws_server;
 
@@ -19,10 +20,14 @@ pub async fn websocket_handler(
 ) -> Result<HttpResponse, Error> {
     let match_info = req.match_info();
 
-    let room_id = match_info.get("room_id").unwrap();
+    let region = match_info.get("region").unwrap();
+    let ally_team = match_info.get("allyTeam").unwrap();
+    let enemy_team = match_info.get("enemyTeam").unwrap();
+
+    let name = region.to_owned() + "|" + ally_team + "|" + enemy_team + "|";
 
     let connection = WsConnection::new(
-        uuid::Uuid::parse_str(room_id).unwrap(),
+        uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_OID, name.as_bytes()),
         data.get_ref().clone(),
     );
 

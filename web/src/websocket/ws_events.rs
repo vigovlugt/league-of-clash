@@ -3,14 +3,14 @@ use uuid::Uuid;
 
 #[derive(Message)]
 #[rtype(result = "()")]
-pub struct WsMessage(pub String);
+pub struct WsMessageEvent(pub String);
 
 #[derive(Message)]
 #[rtype(result = "()")]
 pub struct ConnectEvent {
     pub socket_id: Uuid,
     pub room_id: Uuid,
-    pub addr: Recipient<WsMessage>,
+    pub addr: Recipient<WsMessageEvent>,
 }
 
 #[derive(Message)]
