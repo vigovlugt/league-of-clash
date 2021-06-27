@@ -23,39 +23,69 @@ interface IProps {
     championData: { [key: number]: IChampion };
 }
 
-const TeamPage: React.FC<IProps> = ({
-    allyPlayerStats,
-    enemyPlayerStats,
-    championData,
-}) => {
+const TeamPage: React.FC<IProps> = () => {
     const router = useRouter();
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    const allyTeam =
+        process.browser && router.query.allyTeam
+            ? router.query.allyTeam!.toString()
+            : "";
+    const enemyTeam =
+        process.browser && router.query.allyTeam
+            ? router.query.enemyTeam!.toString()
+            : "";
+
+    useEffect(() => {
+        async function getData() {
+            const [allyPlayerStats, enemyPlayerStats, championData] =
+                await Promise.all([
+                    getPlayerStats(allyTeam),
+                    getPlayerStats(enemyTeam),
+                    getChampions(),
+                ]);
+
+            setIsLoaded(true);
+
+            setChampionData(championData);
+            setPlayerStats(allyPlayerStats, enemyPlayerStats);
+        }
+
+        if (process.browser && allyTeam && enemyTeam) {
+            getData();
+        }
+    }, [allyTeam, enemyTeam]);
+
+    const enemyPlayerStats = useStore((store) => store.enemyPlayerStats);
+    const allyPlayerStats = useStore((store) => store.allyPlayerStats);
 
     const setChampionData = useStore((store) => store.setChampionData);
     const setPlayerStats = useStore((store) => store.setPlayerStats);
-    setChampionData(championData);
-    setPlayerStats(allyPlayerStats, enemyPlayerStats);
 
     const setLeagueOfClash = useStore((store) => store.setLeagueOfClash);
     const setWebSocketManager = useStore((store) => store.setWebSocketManager);
     useEffect(() => {
-        if (process.browser && enemyPlayerStats) {
+        if (
+            process.browser &&
+            Object.values(enemyPlayerStats).length &&
+            Object.values(allyPlayerStats).length &&
+            allyTeam &&
+            enemyTeam
+        ) {
             import("league-of-clash").then((loc) => {
                 setLeagueOfClash(loc, enemyPlayerStats);
             });
 
-            const allyTeam = Object.keys(allyPlayerStats).sort().join("+");
-            const enemyTeam = Object.keys(enemyPlayerStats).sort().join("+");
-
             setWebSocketManager(new WebSocketManager(allyTeam, enemyTeam));
         }
-    }, [enemyPlayerStats, allyPlayerStats]);
+    }, [enemyPlayerStats, allyPlayerStats, allyTeam, enemyTeam]);
 
     const phase = useStore((store) => store.phase);
     const nextPhase = useStore((store) => store.nextPhase);
 
     const [activeTeam, setActiveTeam] = useState(Team.Enemy);
 
-    if (router.isFallback) {
+    if (!isLoaded) {
         return (
             <div className="h-screen flex justify-center items-center bg-dark">
                 <Spinner />
@@ -183,10 +213,6 @@ const TeamPage: React.FC<IProps> = ({
     );
 };
 
-export async function getStaticPaths() {
-    return { paths: [], fallback: true };
-}
-
 async function getPlayerStats(team: string) {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -201,24 +227,5 @@ async function getPlayerStats(team: string) {
 
     return await res.json();
 }
-
-export const getStaticProps: GetStaticProps = async (context) => {
-    const allyTeam = context.params?.allyTeam?.toString();
-    const enemyTeam = context.params?.enemyTeam?.toString();
-    if (!allyTeam || !enemyTeam) {
-        return {
-            notFound: true,
-        };
-    }
-
-    const [allyPlayerStats, enemyPlayerStats, championData] = await Promise.all(
-        [getPlayerStats(allyTeam), getPlayerStats(enemyTeam), getChampions()]
-    );
-
-    return {
-        props: { allyPlayerStats, enemyPlayerStats, championData },
-        revalidate: 60 * 60 * 12, // Revalidate in half a day.
-    };
-};
 
 export default TeamPage;

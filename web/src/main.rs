@@ -3,6 +3,7 @@ use std::env;
 mod websocket;
 
 use actix::Actor;
+use actix_cors::Cors;
 use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use env_logger;
 use league_of_clash::{team::Team, utils};
@@ -44,6 +45,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
+            .wrap(Cors::default().allow_any_origin())
             .data(ws_manager.clone())
             .route("/healthcheck", web::get().to(healthcheck))
             .route(

@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 league-of-clash = {path = "../league-of-clash"}
 actix-web={features=["rustls"], version="3.3.2"}
+actix-cors="0.5.4"
 env_logger="0.8.3"
 actix-web-actors="3.0.0"
 actix="0.10.0"
