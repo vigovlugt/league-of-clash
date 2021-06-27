@@ -2,7 +2,10 @@ use std::collections::HashMap;
 
 use league_of_clash_shared::stats::Stats;
 
-use crate::{champion_score::champion_score_tracker::ChampionScoreTracker, matches::Match};
+use crate::{
+    champion_score::{weighted_calculator::WeightedCalculator, wr_calculator::WrCalculator},
+    matches::Match,
+};
 
 use super::champion_stats::ChampionStats;
 
@@ -11,8 +14,11 @@ pub struct ChampionStatsCreator {
     pub total_wins: i64,
     pub total_ps_games: i64,
 
+    pub total_recent_games: i64,
+
     pub total: ChampionStats,
-    pub score_tracker: ChampionScoreTracker,
+    pub score_calculator: WeightedCalculator,
+    pub score2_calculator: WrCalculator,
 }
 
 impl ChampionStatsCreator {
@@ -32,9 +38,13 @@ impl ChampionStatsCreator {
                 0,
                 0,
                 0.0,
+                0.0,
+                false,
                 HashMap::new(),
             ),
-            score_tracker: ChampionScoreTracker::default(),
+            score_calculator: WeightedCalculator::default(),
+            score2_calculator: WrCalculator::default(),
+            total_recent_games: 0,
         }
     }
 
@@ -46,6 +56,10 @@ impl ChampionStatsCreator {
             .stats_by_role
             .entry(game.role)
             .or_insert(Stats::default());
+
+        if game.get_days_ago() <= 30 {
+            self.total_recent_games += 1;
+        }
 
         self.total_games += 1;
         stats_by_role.games += 1;
@@ -66,7 +80,8 @@ impl ChampionStatsCreator {
             self.total_ps_games += 1;
         }
 
-        self.score_tracker.add_game(game);
+        self.score_calculator.add_game(game);
+        self.score2_calculator.add_game(game);
     }
 
     pub fn get(self) -> ChampionStats {
@@ -88,7 +103,9 @@ impl ChampionStatsCreator {
             },
             self.total_wins,
             self.total_games,
-            self.score_tracker.get_score(),
+            self.score_calculator.get_score(),
+            self.score2_calculator.get_score(),
+            self.total_recent_games > 0,
             self.total.stats_by_role,
         )
     }

@@ -18,6 +18,8 @@ pub struct ChampionStats {
     pub games: i64,
 
     pub score: f64,
+    pub score2: f64,
+    pub recent_game: bool,
 
     pub stats_by_role: HashMap<Role, Stats>,
 }
@@ -34,6 +36,8 @@ impl ChampionStats {
         wins: i64,
         games: i64,
         score: f64,
+        score2: f64,
+        recent_game: bool,
         stats_by_role: HashMap<Role, Stats>,
     ) -> Self {
         ChampionStats {
@@ -47,6 +51,8 @@ impl ChampionStats {
             wins,
             games,
             score,
+            score2,
+            recent_game,
             stats_by_role,
         }
     }

@@ -13,5 +13,5 @@ pub struct ChampionStats {
     pub games: i64,
 
     pub stats_by_role: HashMap<Role, Stats>,
-    pub matchups_by_role: HashMap<Role, Vec<Matchup>>,
+    pub matchups_by_role: HashMap<Role, HashMap<i64, Matchup>>,
 }

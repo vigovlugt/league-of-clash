@@ -31,7 +31,7 @@ use crate::ugg;
 pub async fn get_champion_matchups(
     version: &str,
     champion_id: i64,
-) -> Result<HashMap<Role, Vec<Matchup>>, Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<HashMap<Role, HashMap<i64, Matchup>>, Box<dyn std::error::Error + Send + Sync>> {
     log::info!("Getting matchup stats for: {}", champion_id);
 
     let res =
@@ -56,10 +56,14 @@ pub async fn get_champion_matchups(
                     .as_array()
                     .unwrap()
                     .into_iter()
-                    .map(|data| Matchup {
-                        champion_id: data[0].as_i64().unwrap(),
-                        wins: data[1].as_i64().unwrap(),
-                        games: data[2].as_i64().unwrap(),
+                    .map(|data| {
+                        let matchup = Matchup {
+                            champion_id: data[0].as_i64().unwrap(),
+                            wins: data[1].as_i64().unwrap(),
+                            games: data[2].as_i64().unwrap(),
+                        };
+
+                        return (matchup.champion_id, matchup);
                     })
                     .collect(),
             );

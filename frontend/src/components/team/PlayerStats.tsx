@@ -86,6 +86,9 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
                             <th className="px-6 py-3 text-right text-xs font-medium text-primary uppercase tracking-wider">
                                 Score
                             </th>
+                            <th className="px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                Recent
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="bg-gray-800 divide-y divide-gray-700">

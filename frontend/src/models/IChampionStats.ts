@@ -9,6 +9,8 @@ export default interface IChampionStats {
     wins: number;
     games: number;
     score: number;
+    score2: number;
+    recent_game: boolean;
 }
 
 export function getKda(stats: IChampionStats) {

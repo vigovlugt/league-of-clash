@@ -30,12 +30,11 @@ const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
             item: { champion },
             canDrag: !isPickBanned,
             end: (item, monitor) => {
-                const dropResult =
-                    monitor.getDropResult<{
-                        team: Team;
-                        type: Action;
-                        index: number;
-                    }>();
+                const dropResult = monitor.getDropResult<{
+                    team: Team;
+                    type: Action;
+                    index: number;
+                }>();
                 if (item && dropResult && !isPickBanned) {
                     setPickBan(
                         dropResult.type,
@@ -98,6 +97,9 @@ const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
                 className={`whitespace-nowrap text-right ${padding} text-primary`}
             >
                 {(championStats.score * 100).toFixed(2)}
+            </td>
+            <td className={`whitespace-nowrap ${padding}`}>
+                {championStats.recent_game ? "✓" : ""}
             </td>
         </tr>
     );

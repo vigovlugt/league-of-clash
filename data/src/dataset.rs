@@ -36,7 +36,7 @@ pub async fn create_dataset() -> Result<Dataset, Box<dyn std::error::Error + Syn
     let champion_matchups = futures::future::join_all(matchup_futures)
         .await
         .into_iter()
-        .collect::<HashMap<i64, HashMap<Role, Vec<Matchup>>>>();
+        .collect::<HashMap<i64, HashMap<Role, HashMap<i64, Matchup>>>>();
 
     for (champion_id, matchup_stats) in champion_matchups {
         champion_stats
@@ -57,7 +57,10 @@ pub async fn create_dataset() -> Result<Dataset, Box<dyn std::error::Error + Syn
     })
 }
 
-async fn get_champion_matchups(version: &str, c: &Champion) -> (i64, HashMap<Role, Vec<Matchup>>) {
+async fn get_champion_matchups(
+    version: &str,
+    c: &Champion,
+) -> (i64, HashMap<Role, HashMap<i64, Matchup>>) {
     let champion_id = c.key.parse::<i64>().unwrap();
     let matchup_data = matchups::get_champion_matchups(version, champion_id)
         .await
