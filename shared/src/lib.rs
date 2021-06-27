@@ -1,5 +1,6 @@
 pub mod champion_stats;
 pub mod dataset;
+pub mod duo;
 pub mod matchup;
 pub mod rank;
 pub mod region;

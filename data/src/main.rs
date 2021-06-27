@@ -10,6 +10,7 @@ mod ugg;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    std::env::set_var("RUST_LOG", "info");
     pretty_env_logger::init();
 
     let dataset = create_dataset().await?;

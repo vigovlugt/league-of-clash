@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::{matchup::Matchup, stats::Stats};
+use crate::{duo::Duo, matchup::Matchup, stats::Stats};
 
 use super::role::Role;
 
@@ -14,4 +14,5 @@ pub struct ChampionStats {
 
     pub stats_by_role: HashMap<Role, Stats>,
     pub matchups_by_role: HashMap<Role, HashMap<i64, Matchup>>,
+    pub duos_by_role: HashMap<Role, HashMap<i64, Duo>>,
 }

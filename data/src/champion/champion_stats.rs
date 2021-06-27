@@ -51,5 +51,6 @@ pub async fn get_champion_stats(
         wins: total_wins,
         games: total_games,
         matchups_by_role: HashMap::new(),
+        duos_by_role: HashMap::new(),
     })
 }

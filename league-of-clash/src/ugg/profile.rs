@@ -30,6 +30,8 @@ pub async fn get(
     let client = reqwest::Client::new();
     let res = client.post(UGG_API).json(&query).send().await.unwrap();
 
+    res.error_for_status_ref()?;
+
     let response_body: Response<fetch_profile_ranks::ResponseData> = res.json().await.unwrap();
 
     let player_rank_fields = response_body

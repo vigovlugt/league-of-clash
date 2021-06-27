@@ -1,10 +1,10 @@
 use league_of_clash_shared::{
-    champion_stats::ChampionStats, dataset::Dataset, matchup::Matchup, role::Role,
+    champion_stats::ChampionStats, dataset::Dataset, duo::Duo, matchup::Matchup, role::Role,
 };
 use std::{collections::HashMap, fs::File, io::Write};
 
 use crate::{
-    champion::{champion::Champion, champion_stats, matchups},
+    champion::{champion::Champion, champion_stats, duos, matchups},
     riot, ugg,
 };
 
@@ -45,6 +45,17 @@ pub async fn create_dataset() -> Result<Dataset, Box<dyn std::error::Error + Syn
             .matchups_by_role = matchup_stats;
     }
 
+    let duo_futures = champions.iter().map(|c| get_champion_duos(&version, c));
+
+    let champion_duos = futures::future::join_all(duo_futures)
+        .await
+        .into_iter()
+        .collect::<HashMap<i64, HashMap<Role, HashMap<i64, Duo>>>>();
+
+    for (champion_id, duos_stats) in champion_duos {
+        champion_stats.get_mut(&champion_id).unwrap().duos_by_role = duos_stats;
+    }
+
     let mut total_games = 0;
 
     for champion_stats in champion_stats.values() {
@@ -67,6 +78,13 @@ async fn get_champion_matchups(
         .unwrap();
 
     (champion_id, matchup_data)
+}
+
+async fn get_champion_duos(version: &str, c: &Champion) -> (i64, HashMap<Role, HashMap<i64, Duo>>) {
+    let champion_id = c.key.parse::<i64>().unwrap();
+    let duo_data = duos::get_champion_duos(version, champion_id).await.unwrap();
+
+    (champion_id, duo_data)
 }
 
 pub fn save_dataset(

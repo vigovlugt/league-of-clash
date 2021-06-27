@@ -73,6 +73,8 @@ async fn get_page(
     let client = reqwest::Client::new();
     let res = client.post(UGG_API).json(&query).send().await?;
 
+    res.error_for_status_ref()?;
+
     let response_body: Response<fetch_match_summaries::ResponseData> = res.json().await?;
 
     Ok(response_body
