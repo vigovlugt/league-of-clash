@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 import IPlayerStats, { getWinrate } from "../../models/IPlayerStats";
+import Team from "../../models/Team";
 import useStore from "../../store/DraftStore";
 import { getRankClass } from "../../utils/rank";
 import ChampionStats from "../champion/ChampionStats";
 
 interface IProps {
     playerStats: IPlayerStats;
+    team: Team;
 }
 
-const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
+const PlayerStats: React.FC<IProps> = ({ playerStats, team }) => {
     const [showMore, setShowMore] = useState(false);
 
     const championStats = useMemo(
@@ -64,44 +66,43 @@ const PlayerStats: React.FC<IProps> = ({ playerStats }) => {
                 </h3>
             </div>
 
-            <div className="rounded overflow-hidden mt-1">
-                <table className="min-w-full divide-y divide-gray-700">
-                    <thead className="bg-light-dark">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                Champion
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                Winrate
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                Games
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                KDA
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider whitespace-nowrap">
-                                Carry
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-primary uppercase tracking-wider">
-                                Score
-                            </th>
-                            <th className="px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                Recent
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-gray-800 divide-y divide-gray-700">
-                        {championStats.slice(0, numChampionStats).map((c) => (
-                            <ChampionStats
-                                key={c.champion_id}
-                                isPickBanned={isPickBanned(c.champion_id)}
-                                championStats={c}
-                            />
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <table className="min-w-full divide-y divide-gray-700 mt-1 rounded border-collapse">
+                <thead className="bg-light-dark">
+                    <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Champion
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Winrate
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Games
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            KDA
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                            Carry
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-primary uppercase tracking-wider">
+                            Score
+                        </th>
+                        <th className="px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Recent
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-gray-800 divide-y divide-gray-700">
+                    {championStats.slice(0, numChampionStats).map((c) => (
+                        <ChampionStats
+                            key={c.champion_id}
+                            isPickBanned={isPickBanned(c.champion_id)}
+                            team={team}
+                            championStats={c}
+                        />
+                    ))}
+                </tbody>
+            </table>
             <div className="flex">
                 <button
                     className="bg-light-dark px-3 py-2 mt-2 font-bold border-b-4 border-gray-900 active:border-b-0 active:mt-3 focus:outline-none"

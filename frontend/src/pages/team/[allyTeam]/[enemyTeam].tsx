@@ -165,6 +165,7 @@ const TeamPage: React.FC<IProps> = () => {
                                 .map((p) => (
                                     <PlayerStats
                                         playerStats={p}
+                                        team={activeTeam}
                                         key={p.summoner_name}
                                     ></PlayerStats>
                                 ))}

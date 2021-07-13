@@ -2,6 +2,7 @@ import React from "react";
 import { useDrag } from "react-dnd";
 import { CHAMPION } from "../../constants/constants";
 import Action from "../../models/Action";
+import IChampion from "../../models/IChampion";
 import IChampionStats, {
     getCarryScore,
     getKda,
@@ -9,15 +10,19 @@ import IChampionStats, {
 } from "../../models/IChampionStats";
 import Team from "../../models/Team";
 import useStore from "../../store/DraftStore";
-
-const DDRAGON_URL = process.env.NEXT_PUBLIC_DDRAGON_URL;
+import ChampionInfo from "./ChampionInfo";
 
 interface IProps {
     championStats: IChampionStats;
     isPickBanned: boolean;
+    team: Team;
 }
 
-const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
+const ChampionStats: React.FC<IProps> = ({
+    championStats,
+    isPickBanned,
+    team,
+}) => {
     const championData = useStore((store) => store.championData);
 
     const setPickBan = useStore((store) => store.setPickBan);
@@ -63,22 +68,11 @@ const ChampionStats: React.FC<IProps> = ({ championStats, isPickBanned }) => {
         >
             <td className={`${padding} whitespace-nowrap`}>
                 <div className="flex items-center">
-                    <div
-                        className={`relative overflow-hidden mr-4  ${iconSize}`}
-                    >
-                        <img
-                            src={`${DDRAGON_URL}cdn/11.11.1/img/champion/${champion.id}.png`}
-                            className={`absolute inset-0 ${iconSize}`}
-                            style={{ transform: "scale(1.1,1.1)" }}
-                        ></img>
-                    </div>
-                    <a
-                        href={`https://u.gg/lol/champions/${champion.id}/build`}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <h4 className="text-xl font-header">{champion.name}</h4>
-                    </a>
+                    <ChampionInfo
+                        champion={champion}
+                        iconSize={iconSize}
+                        team={team}
+                    ></ChampionInfo>
                 </div>
             </td>
             <td className={`whitespace-nowrap text-right ${padding}`}>
